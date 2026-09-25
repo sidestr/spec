@@ -49,9 +49,11 @@ export async function findChain({ relays, chainId, verify, signer, fetchJson }) 
   const t = await fetchLatestTip({ relays, chainId, verify, signer }); if (!t) throw new Error(`no announcement for ${chainId} on ${relays.length} relay(s)`);
   return chooseMirror({ tip: t, chainId, fetchJson });
 }
+// a document is announced by its signer (level 1) or by any of its signers (level 2, SPEC 4)
+export const announcedBy = (chain, pubkey) => chain.signer === pubkey || (Array.isArray(chain.signers) && chain.signers.includes(pubkey));
 export async function chooseMirror({ tip: t, chainId, fetchJson = async (u) => (await fetch(u, { cache: 'no-store' })).json() }) {
   const tried = [];
-  for (const m of t.mirrors) { try { const chain = await fetchJson(`${m}/chain.json`); if (chain.id === chainId && chain.signer === t.pubkey) return { mirror: m, tip: t, chain }; tried.push(`${m}: signer ${String(chain.signer).slice(0, 8)}… is not the announcer ${t.pubkey.slice(0, 8)}…`); } catch (e) { tried.push(`${m}: ${e.message}`); } }
+  for (const m of t.mirrors) { try { const chain = await fetchJson(`${m}/chain.json`); if (chain.id === chainId && announcedBy(chain, t.pubkey)) return { mirror: m, tip: t, chain }; tried.push(`${m}: signer ${String(chain.signer ?? (chain.signers ?? []).join(',')).slice(0, 8)}… is not the announcer ${t.pubkey.slice(0, 8)}…`); } catch (e) { tried.push(`${m}: ${e.message}`); } }
   throw new Error(`${chainId}: announced at tip ${t.tip} by ${t.pubkey.slice(0, 8)}… but no mirror it names checks out (${tried.join('; ') || 'no mirrors named'})`);
 }
 

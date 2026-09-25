@@ -23,6 +23,9 @@ t('an empty content is rejected, not read as zero headers', parseTip({ ...ev, co
 t('more than TIP_HEADERS headers, or non-hex content, is rejected before any slicing', parseTip({ ...ev, content: H(1).repeat(13) }) === null && parseTip({ ...ev, content: S(1).repeat(13) }) === null && parseTip({ ...ev, content: 'zz'.repeat(164) }) === null && parseTip({ ...ev, content: H(1).repeat(12) }) !== null);
 const docs = { 'https://a.example/siding/chain.json': { id: chain.id, signer: 'ff'.repeat(32) }, 'https://b.example/siding/chain.json': { id: chain.id, signer: pub } };
 const found = await chooseMirror({ tip: p, chainId: chain.id, fetchJson: async (u) => { if (!(u in docs)) throw new Error('404'); return docs[u]; } });
+const fedDocs = { 'https://f.example/fed/chain.json': { id: 'sidestr:fed', signers: ['aa'.repeat(32), pub, 'bb'.repeat(32)] } }; const fedTip = parseTip(tipEvent({ events, key, chainId: 'sidestr:fed', headersHex: [H(1)], tip: 1, mirrors: ['https://f.example/fed'] }));
+const fedFound = await chooseMirror({ tip: fedTip, chainId: 'sidestr:fed', fetchJson: async (u) => { if (!(u in fedDocs)) throw new Error('404'); return fedDocs[u]; } });
+t('a level-2 document is accepted when the announcer is one of its signers', fedFound.mirror === 'https://f.example/fed');
 t('the mirror whose chain.json names the announcer is chosen, the other skipped', found.mirror === 'https://b.example/siding' && found.chain.signer === pub);
 let failed = null; try { await chooseMirror({ tip: p, chainId: chain.id, fetchJson: async () => ({ id: chain.id, signer: 'ee'.repeat(32) }) }); } catch (x) { failed = x.message; }
 t('no mirror vouched for by the announcer -> a clear error', /no mirror it names checks out/.test(failed ?? ''));
