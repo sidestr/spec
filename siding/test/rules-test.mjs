@@ -16,6 +16,8 @@ const engine = await loadEngine(chain); const s = await new Siding({ engine, cha
 t('the engine loaded both rules', !!engine.rules.assets && !!engine.rules.pool && engine.k.blocks.ruleSets.blockContext.rules.some((r) => r['@id'] === 'sidestr:rule-pool'));
 while (s.tip().height < 101) await s.produce(key);
 // records
+const hx = (t) => Buffer.from(t).toString('hex');
+t('recordText refuses a push whose length is not its data: bytes after the push, bytes missing, and a long push over its length', recordText('6a03' + hx('tally:x')) === null && recordText('6a07' + hx('abc')) === null && recordText('6a4c50' + hx('y'.repeat(81))) === null && recordText('6a4c50' + hx('y'.repeat(80))) === 'y'.repeat(80));
 t('recordScript/recordText round-trip, short and long pushes', recordText(recordScript('issue:SHELL:2')) === 'issue:SHELL:2' && recordText(recordScript('x'.repeat(200))) === 'x'.repeat(200));
 t('a tally with a duplicate vout is malformed', parseTally('tally:self:0=5,0=6') === null && parseTally('tally:self:0=5,1=6').assigns.length === 2);
 t('isqrt is exact', isqrt(10n ** 18n) === 10n ** 9n && isqrt(99n) === 9n);

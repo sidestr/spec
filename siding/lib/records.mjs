@@ -6,7 +6,8 @@ export const MAX_AMOUNT = 2 ** 53 - 1;
 // the text of an OP_RETURN output, or null when it is not a single push of <= 255 bytes of UTF-8
 export function recordText(spk) {
   const m = /^6a(?:4c([0-9a-f]{2})|([0-9a-f]{2}))([0-9a-f]*)$/i.exec(spk); if (!m) return null;
-  const len = parseInt(m[1] ?? m[2], 16); if (m[2] && len > 75) return null; if (m[1] && len <= 75) return null; // minimal push only if (m[3].length !== len * 2 || len > 255) return null;
+  const len = parseInt(m[1] ?? m[2], 16); if (m[2] && len > 75) return null; if (m[1] && len <= 75) return null; // minimal push only
+  if (m[3].length !== len * 2 || len > 255) return null; // exactly the pushed bytes: nothing after the push, nothing missing
   try { return dec.decode(Uint8Array.from(m[3].match(/../g) ?? [], (x) => parseInt(x, 16))); } catch { return null; }
 }
 export function recordScript(text) { const b = enc.encode(text); if (b.length > 255) throw new Error('a record is at most 255 bytes'); return '6a' + (b.length <= 75 ? b.length.toString(16).padStart(2, '0') : '4c' + b.length.toString(16).padStart(2, '0')) + toHex(b); }
