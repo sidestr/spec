@@ -313,6 +313,7 @@ status. The core above changes only when a proposal has run unchanged for a whil
 | [Level 2: several signers](proposals/level-2.md) | steps 1–7 built; running on `sidestr:txbt4-fed` |
 | [The EVM as a rule](proposals/evm.md) | running on `sidestr:txbt4-evm` with a public JSON-RPC |
 | [Ephemeral chains](proposals/ephemeral.md) | a note: chains made for one job, with a close, a tombstone and manners |
+| [A browser signer](proposals/browser-signer.md) | draft: `window.nostr.sidestr.signTransaction`, reference signer in Podkey |
 
 ## 16. Changelog
 
