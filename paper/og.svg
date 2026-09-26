@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="DejaVu Sans, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#f4faf9"/></linearGradient>
+    <linearGradient id="top" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#14b8a6"/><stop offset="1" stop-color="#0f766e"/></linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="22" flood-color="#10121d" flood-opacity="0.07"/></filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1150" cy="40" r="320" fill="#0f766e" opacity="0.05"/>
+  <circle cx="1120" cy="120" r="180" fill="#0f766e" opacity="0.05"/>
+  <rect width="1200" height="8" fill="url(#top)"/>
+  <text x="80" y="92" font-size="29" font-weight="700" fill="#16181d" letter-spacing="-0.3">side<tspan fill="#0f766e">·</tspan>str</text>
+  <text x="1120" y="90" text-anchor="end" font-size="14" font-weight="700" fill="#0f766e" letter-spacing="2">WHITE PAPER · DRAFT · 27 SEPTEMBER 2026</text>
+  <text x="78" y="238" font-size="30" font-weight="700" fill="#5b6470" letter-spacing="-0.4">sidestr:</text>
+  <text x="78" y="306" font-size="50" font-weight="800" fill="#16181d" letter-spacing="-1.6">User-Activated Sidechains</text>
+  <text x="80" y="366" font-size="22" fill="#5b6470">A chain that needs nothing from its parent.</text>
+  <text x="80" y="396" font-size="22" fill="#5b6470">Blocks valid because signed. Every coin locked above.</text>
+  <text x="80" y="426" font-size="22" fill="#5b6470">Every reader validates. Signers only order.</text>
+  <g>
+    <text x="80" y="530" font-family="DejaVu Sans Mono, monospace" font-size="54" font-weight="700" fill="#16181d">8</text>
+    <text x="80" y="562" font-size="15" font-weight="700" fill="#5b6470" letter-spacing="2">CHAINS</text>
+    <text x="230" y="530" font-family="DejaVu Sans Mono, monospace" font-size="54" font-weight="700" fill="#16181d">5,600</text>
+    <text x="230" y="562" font-size="15" font-weight="700" fill="#5b6470" letter-spacing="2">BLOCKS</text>
+    <text x="470" y="530" font-family="DejaVu Sans Mono, monospace" font-size="54" font-weight="700" fill="#1a7f37">0</text>
+    <text x="470" y="562" font-size="15" font-weight="700" fill="#5b6470" letter-spacing="2">CHANGES TO BITCOIN</text>
+    <text x="800" y="530" font-family="DejaVu Sans Mono, monospace" font-size="20" font-weight="700" fill="#0f766e">sidestr.com/spec/paper/</text>
+    <text x="800" y="562" font-size="15" font-weight="700" fill="#5b6470" letter-spacing="2">7 PAGES · PDF</text>
+  </g>
+  <g filter="url(#soft)"><rect x="852" y="150" width="288" height="290" rx="18" fill="#ffffff" stroke="#e6e8eb" stroke-width="1.5"/></g>
+  <text x="884" y="194" font-family="DejaVu Sans Mono, monospace" font-size="13" font-weight="700" fill="#0f766e" letter-spacing="2.5">THE READER TRUSTS</text>
+  <line x1="884" y1="210" x2="1108" y2="210" stroke="#eef0f2" stroke-width="1.5"/>
+  <g font-size="19" fill="#16181d">
+    <text x="912" y="248">no one for validity</text><text x="912" y="288">signers for ordering</text><text x="912" y="328">the peg, stated in</text><text x="912" y="356">the document</text><text x="912" y="404">less at each level</text>
+  </g>
+  <g font-family="DejaVu Sans Mono, monospace" font-size="22" font-weight="700" fill="#1a7f37">
+    <text x="884" y="248">✓</text><text x="884" y="288">✓</text><text x="884" y="328">✓</text><text x="884" y="404">✓</text>
+  </g>
+</svg>

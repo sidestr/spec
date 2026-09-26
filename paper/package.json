@@ -1,0 +1,8 @@
+{
+  "name": "sidestr-paper",
+  "private": true,
+  "description": "Builds the sidestr white paper: Markdown to HTML (md2html.py), HTML to PDF (Chromium), metadata into the PDF (meta.mjs).",
+  "type": "module",
+  "scripts": { "build": "sh build.sh" },
+  "dependencies": { "pdf-lib": "^1.17.1" }
+}

@@ -54,5 +54,38 @@ th, td { border: 1px solid #000; padding: 2.5pt 6pt; text-align: left; vertical-
 ol { margin: 0 0 7pt 18pt; padding: 0; } li { margin-bottom: 3pt; }
 code { font-family: "Courier New", monospace; font-size: 10pt; }
 a { color: #000; text-decoration: none; }
+nav { text-align: right; font-size: 10pt; color: #5b6470; margin-bottom: 14pt; } nav a { color: #0f766e; }
+@media print { nav { display: none; } }
+@media screen { body { padding: 24px 16px; } }
 '''
-print(f'<!doctype html><html><head><meta charset="utf-8"><title>{html.escape(title)}</title><style>{css}</style></head><body><h1>{html.escape(title)}</h1><div class="front">{front_html}</div>{"".join(out)}</body></html>')
+abstract = re.sub(r'^<p class="abstract"><b>Abstract\.</b>\s*', '', next(x for x in out if 'class="abstract"' in x))
+abstract = re.sub(r'<.*?>', '', abstract)
+desc = html.escape(abstract.split('. ')[2] + '. ' + abstract.split('. ')[3] + '.')  # two sentences of the abstract
+author = front[0]; date = next(x for x in reversed(front) if x).replace('Draft, ', '')
+iso = __import__('datetime').datetime.strptime(date, '%d %B %Y').strftime('%Y/%m/%d')
+base = 'https://sidestr.com/spec/paper/'
+meta = f'''<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="{desc}">
+<meta name="author" content="{html.escape(author)}">
+<link rel="canonical" href="{base}">
+<meta property="og:site_name" content="sidestr">
+<meta property="og:title" content="{html.escape(title)}">
+<meta property="og:description" content="{desc}">
+<meta property="og:type" content="article">
+<meta property="og:url" content="{base}">
+<meta property="og:image" content="{base}og.png?v=1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{html.escape(title)}: white paper, draft {html.escape(date)}">
+<meta property="article:author" content="{html.escape(author)}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{html.escape(title)}">
+<meta name="twitter:description" content="{desc}">
+<meta name="twitter:image" content="{base}og.png?v=1">
+<meta name="citation_title" content="{html.escape(title)}">
+<meta name="citation_author" content="{html.escape(author)}">
+<meta name="citation_publication_date" content="{iso}">
+<meta name="citation_pdf_url" content="{base}sidestr.pdf">
+<meta name="citation_abstract_html_url" content="{base}">'''
+links = '<nav><a href="sidestr.pdf">PDF</a> · <a href="sidestr.md">Markdown</a> · <a href="../">Spec</a> · <a href="https://sidestr.com/">sidestr.com</a></nav>'
+print(f'<!doctype html><html lang="en"><head><meta charset="utf-8"><title>{html.escape(title)}</title>{meta}<style>{css}</style></head><body>{links}<h1>{html.escape(title)}</h1><div class="front">{front_html}</div>{"".join(out)}</body></html>')
