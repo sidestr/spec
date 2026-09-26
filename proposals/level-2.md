@@ -8,7 +8,8 @@ the challenge is still a script and a block is still valid when its solution sat
 **Challenge.** A taproot output whose internal key is provably unspendable (the BIP 341 NUMS
 point tweaked by the chain id) and whose single leaf is `multi_a(k, pk_1, …, pk_n)`:
 `<pk_1> CHECKSIG <pk_2> CHECKSIGADD … <pk_n> CHECKSIGADD <k> NUMEQUAL`. The document lists
-`signers` (the `pk_i`, in leaf order) and `threshold`, and `challenge` is derived from them,
+`signers` (the `pk_i`, in leaf order, distinct: a key listed twice would fill two slots with one
+signature) and `threshold`, and `challenge` is derived from them,
 so a validator can check the derivation. The solution is the script-path witness: `n`
 signature slots in leaf order, an empty item for a signer who did not sign, then the leaf
 script and the control block; it is carried as one push of any length after the witness
