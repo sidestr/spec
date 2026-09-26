@@ -73,7 +73,7 @@ meta = f'''<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta property="og:description" content="{desc}">
 <meta property="og:type" content="article">
 <meta property="og:url" content="{base}">
-<meta property="og:image" content="{base}og.png?v=1">
+<meta property="og:image" content="{base}og.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="{html.escape(title)}: white paper, draft {html.escape(date)}">
@@ -81,7 +81,7 @@ meta = f'''<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{html.escape(title)}">
 <meta name="twitter:description" content="{desc}">
-<meta name="twitter:image" content="{base}og.png?v=1">
+<meta name="twitter:image" content="{base}og.png?v=2">
 <meta name="citation_title" content="{html.escape(title)}">
 <meta name="citation_author" content="{html.escape(author)}">
 <meta name="citation_publication_date" content="{iso}">
