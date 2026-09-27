@@ -34,18 +34,38 @@ export function evmOverlay(chain, { claimsOf = null } = {}) {
   const receipts = new Map();   // eth tx hash -> receipt (+ height, sidechain txid)
   const txs = new Map();        // eth tx hash -> { tx (ethereumjs), height, index }
   const blocks = new Map();     // height -> { hashes: [eth tx hashes], root }
+  const src = (m) => typeof window === 'undefined' ? m : `https://cdn.jsdelivr.net/npm/${m}@10.1.3/+esm`; // Node resolves the packages; a page takes jsdelivr's bundles
+  // JSON-safe copies of receipts (BigInt gas, Uint8Array logs) for a snapshot, and back
+  const pack = (v) => typeof v === 'bigint' ? { $b: v.toString() } : v instanceof Uint8Array ? { $u: hex(v) } : Array.isArray(v) ? v.map(pack) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, pack(x)])) : v;
+  const unpack = (v) => Array.isArray(v) ? v.map(unpack) : v && typeof v === 'object' ? ('$b' in v ? BigInt(v.$b) : '$u' in v ? unhex(v.$u) : Object.fromEntries(Object.entries(v).map(([k, x]) => [k, unpack(x)]))) : v;
   const self = {
     graph: { '@id': 'sidestr:overlay-evm', '@context': { sidestr: 'https://sidestr.com/ns#' }, '@graph': [
       { '@id': RULE, '@type': 'ValidationRule', ruleSet: 'btc:BlockContextRules', label: 'evm', errorCode: 'bad-evm',
         comment: 'Every carried Ethereum transaction runs in order and succeeds in being applied (a reverting call is applied too); deposits credit at 1 sat = 1 gwei; withdrawals are paid by the coinbase; the coinbase commits the state root after the block (proposals/evm.md).' } ] },
     chainId, gasLimit, reserve, receipts, txs, blocks, roots, verdicts, ready: false,
     async init() {
-      if (lib) return self; const src = (m) => typeof window === 'undefined' ? m : `https://cdn.jsdelivr.net/npm/${m}@10.1.3/+esm`; // Node resolves the packages; a page takes jsdelivr's bundles
+      if (lib) return self;
       const [vmm, tx, blk, com, util] = await Promise.all([import(src('@ethereumjs/vm')), import(src('@ethereumjs/tx')), import(src('@ethereumjs/block')), import(src('@ethereumjs/common')), import(src('@ethereumjs/util'))]);
       lib = { vmm, tx, blk, com, util }; common = com.createCustomCommon({ chainId, name: chain.id }, com.Mainnet, { hardfork: com.Hardfork.Cancun }); vm = await vmm.createVM({ common });
       roots.set(-1, hex(await vm.stateManager.getStateRoot())); self.ready = true; return self;
     },
     get vm() { return vm; }, get common() { return common; }, get lib() { return lib; },
+    // the state as of the last applied height, as JSON-safe data a client can keep: the trie's backing map (every node and
+    // code blob written so far; the trie is not pruned, so every root in `roots` stays readable), the roots, the block
+    // records, the receipts and the carried transactions as RLP. restore(snap, height) rebuilds the VM on it at that height.
+    async snapshot() {
+      if (!lib) await self.init(); const map = vm.stateManager._trie.database().db._database;
+      return { db: [...map].map(([k, v]) => [k, hex(v)]), roots: [...roots], blocks: [...blocks], receipts: [...receipts].map(([h, r]) => [h, pack(r)]),
+        txs: [...txs].map(([h, t]) => [h, { rlp: hex(t.tx.serialize()), height: t.height, sidechainTxid: t.sidechainTxid, index: t.index }]) };
+    },
+    async restore(snap, height) {
+      if (!lib) await self.init(); const { vmm, tx: T } = lib; const { MerkleStateManager } = await import(src('@ethereumjs/statemanager'));
+      const sm = new MerkleStateManager({ common }); const map = sm._trie.database().db._database; map.clear(); for (const [k, v] of snap.db) map.set(k, unhex(v));
+      vm = await vmm.createVM({ common, stateManager: sm });
+      roots.clear(); for (const [h, r] of snap.roots) roots.set(h, r); blocks.clear(); for (const [h, b] of snap.blocks) blocks.set(h, b);
+      receipts.clear(); for (const [h, r] of snap.receipts) receipts.set(h, unpack(r)); txs.clear(); for (const [h, t] of snap.txs) txs.set(h, { tx: T.createTxFromRLP(unhex(t.rlp), { common }), height: t.height, sidechainTxid: t.sidechainTxid, index: t.index });
+      const root = roots.get(height); if (root === undefined) throw new Error(`no evm state at height ${height}`); await vm.stateManager.setStateRoot(unhex(root)); return self;
+    },
     rootHex: async () => '0x' + hex(await vm.stateManager.getStateRoot()),
     // run one sidechain transaction's deposits and carriers against the current VM state; returns { ok, error, hashes, withdrawals, gasUsed }
     async applyTx(tx, txid, { height, time, index0 = 0 }) {
