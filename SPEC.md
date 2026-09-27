@@ -330,6 +330,7 @@ status. The core above changes only when a proposal has run unchanged for a whil
 | [The EVM as a rule](proposals/evm.md) | running on `sidestr:txbt4-evm` with a public JSON-RPC |
 | [Ephemeral chains](proposals/ephemeral.md) | a note: chains made for one job, with a close, a tombstone and manners |
 | [A browser signer](proposals/browser-signer.md) | draft: `window.nostr.sidestr.signTransaction`, reference signer in Podkey |
+| [Markets](proposals/markets.md) | draft: prediction markets as one rule over assets and pools (split, merge, redeem, a named resolver, refund at par) |
 
 ## 16. Changelog
 
