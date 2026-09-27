@@ -128,6 +128,16 @@ A block is valid when it is valid under the parent's rules with these changes, i
 The challenge is a script, so it can be one key, a `multi_a` threshold, or anything the
 engine's interpreter runs. Changing the challenge is a rule change (section 8).
 
+**Ordering is a rule; validity is not.** What a block may contain is fixed above and checked
+by every reader. Who makes the next block, and how the signers agree on it, is the chain's
+ordering: the challenge, and the round by which a block is proposed and sealed. One key
+(section 9, level 1) and a threshold with a round over the relay (9.1) are the two orderings
+in use; a leader schedule, a stake-weighted challenge with a slashing rule, or a raised
+`powLimit` are others, and a chain document names the one it uses. An ordering may change how
+soon a block comes and who can stall the chain. It may not change what is valid, and one that
+asks the reader to trust the orderers for validity is not an ordering under this
+specification. Discussion: [issue 25](https://github.com/sidestr/spec/issues/25).
+
 ## 5. Genesis
 
 The genesis document lists the peg outputs the chain starts from, and the genesis block mints
