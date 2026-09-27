@@ -15,7 +15,7 @@ export class Siding {
     Object.assign(this, { engine, chain, dir, signer, log });
     const { k } = engine; this.k = k;
     this.utxo = new Map(); this.node = new ChainNode({ k, utxo: this.utxo, epochStart: 0, log });
-    this.mempool = new Map(); this.mempoolSpent = new Set();
+    this.mempool = new Map(); this.mempoolSpent = new Set(); this.rejected = new Map(); // txid -> { why, hex }: what a block rule refused this session, by its exact bytes (a re-signed fix shares the txid and is judged afresh)
     this.dat = `${dir}/blocks.dat`; this.idx = `${dir}/blocks.json`;
     this.bits = k.headers.compactFromTarget(BigInt('0x' + chain.powLimit));
   }
@@ -77,6 +77,7 @@ export class Siding {
   async submit(hex) {
     const { k } = this; const tx = k.codec.decode('Transaction', hex); const txid = k.codec.txid(tx);
     if (this.mempool.has(txid)) return { txid, dup: true };
+    const rj = this.rejected.get(txid); if (rj && rj.hex === hex.toLowerCase()) throw new Error(`rejected this session: ${rj.why}`);
     const s = k.blocks.validateTransaction(tx, false); if (!s.ok) throw new Error(`transaction: ${s.results.filter((r) => r.ok === false).map((r) => r.rule).join(', ')}`);
     const prevouts = []; let inSum = 0;
     for (const i of tx.inputs) { const key = keyOf(i.prevout); if (this.mempoolSpent.has(key)) throw new Error(`input ${key} already spent in the mempool`); const c = this.utxo.get(key); if (!c) throw new Error(`input ${key} is not an unspent coin`);
@@ -128,9 +129,9 @@ export class Siding {
   // SPEC 6: a claim pays the peg's amount to the script the peg-in named, followed by its marker
   claimed(txid, vout) { return this.engine.sidestr?.claims.has(outpointOf(txid, vout)) ?? false; }
   // the next block, unsigned: the mempool in order, fees to the challenge, the claims (SPEC 4, 6)
-  async buildNext({ time = Math.floor(Date.now() / 1000), claims = [] } = {}) {
+  async buildNext({ time = Math.floor(Date.now() / 1000), claims = [], txs: only = null } = {}) {
     const tip = this.tip(); const t = Math.max(time, tip.time + 1);
-    const { txs, root, withdrawals } = await this.sequencedEvm(tip.height + 1, t); const fees = txs.reduce((s, tx) => s + this.fees(tx), 0);
+    const { txs, root, withdrawals } = only ? { txs: only, root: null, withdrawals: [] } : await this.sequencedEvm(tip.height + 1, t); const fees = txs.reduce((s, tx) => s + this.fees(tx), 0);
     const outputs = fees > 0 ? [{ value: fees, scriptPubKey: this.chain.challenge }] : [];
     for (const w of withdrawals) outputs.push({ value: w.sats, scriptPubKey: w.script }); // evm withdrawals, paid by rule
     if (root) { const { rootScript } = await import('./overlays/evm.mjs'); outputs.push({ value: 0, scriptPubKey: rootScript(root) }); }
@@ -140,10 +141,40 @@ export class Siding {
   // one signer: build, sign, add
   async produce(privHex, opts = {}) {
     if (this.federation) throw new Error('a federated chain makes blocks through the round (proposals/level-2.md), not produce()');
-    const { block, fees, claims } = await this.buildNext(opts);
-    const signed = signBlock({ ...this.engine, interpreter: this.k.interpreter, schnorrSign: this.signer.schnorrSign }, block, this.chain.challenge, privHex);
-    const r = await this.addBlock(this.k.codec.encodeHex('Block', signed));
-    return { ...r, fees, claims };
+    const sign = (block) => this.k.codec.encodeHex('Block', signBlock({ ...this.engine, interpreter: this.k.interpreter, schnorrSign: this.signer.schnorrSign }, block, this.chain.challenge, privHex));
+    let built = await this.buildNext(opts), evicted = [];
+    try { const r = await this.addBlock(sign(built.block)); return { ...r, fees: built.fees, claims: built.claims, evicted }; }
+    catch (e) {
+      // a transaction admission accepted but a block rule refuses would otherwise be retried every tick until
+      // restart (spec issue 13): find the ones a block cannot carry, drop them, remember them, and build once more
+      if (!this.mempool.size) throw e;
+      evicted = await this.evictUnblockable(opts, sign); if (!evicted.length) throw e;
+      built = await this.buildNext(opts); const r = await this.addBlock(sign(built.block)); return { ...r, fees: built.fees, claims: built.claims, evicted };
+    }
+  }
+  // the validator's verdict on a block that is not applied: the same checks applyNext makes
+  checkBlock(hex) {
+    const { k, node } = this; const block = k.codec.decode('Block', hex); const h = blockHeight(block); const failed = [];
+    if (block.header.prevBlockHash !== node.chain[h - 1]) failed.push('prev');
+    const [hv] = k.headers.validateChain([block.header], { startHeight: h, prevContext: node.headers.slice(0, h), now: Math.floor(Date.now() / 1000) + 7200 });
+    const st = k.blocks.validateBlockStructure(block); const c = k.blocks.validateBlockContext(block, { height: h, utxo: this.utxo, mtp: node.mtp(h) });
+    for (const r of [...hv.results, ...st.results, ...c.results]) if (r.ok === false) failed.push(r.rule);
+    return { ok: failed.length === 0, failed };
+  }
+  // the mempool in order, each transaction added to a candidate block in turn; one whose addition makes the
+  // block fail is evicted with the rules it broke, and refused if it comes back this session. Returns the evicted.
+  async evictUnblockable(opts, sign) {
+    const kept = [], evicted = [];
+    for (const [txid, tx] of [...this.mempool.entries()]) {
+      const { block } = await this.buildNext({ ...opts, txs: [...kept, tx] }); const v = this.checkBlock(sign(block));
+      if (v.ok) { kept.push(tx); continue; }
+      const why = v.failed.join(', '); this.evict(txid, why); evicted.push({ txid, why }); this.log(`mempool: ${txid.slice(0, 16)}… evicted, a block with it fails: ${why}`);
+    }
+    return evicted;
+  }
+  evict(txid, why) {
+    const tx = this.mempool.get(txid); if (!tx) return false; this.mempool.delete(txid); this.rejected.set(txid, { why, hex: this.k.codec.encodeHex('Transaction', tx).toLowerCase() });
+    this.mempoolSpent = new Set([...this.mempool.values()].flatMap((t) => t.inputs.map((i) => keyOf(i.prevout)))); return true;
   }
   // a sealed block (any path) added
   addSealed(block) { return this.addBlock(this.k.codec.encodeHex('Block', block)); }

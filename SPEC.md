@@ -257,7 +257,10 @@ ahead of the signer. A chain id is a name, not a proof, so a client shows the si
 on. Transactions reach a producer by `POST /tx` or as kind 23500 events on a
 relay, content the transaction hex, tagged `chain` = chain id; relays index only single-letter
 tags, so a producer subscribes by kind and checks the tag on receipt. The event's key is
-anyone's: the transaction authorises itself. A producer includes what validates. A wallet with
+anyone's: the transaction authorises itself. A producer includes what validates. A transaction
+it admitted but a block rule refuses is dropped, with the rules it broke, and the same bytes
+are refused for the rest of the session, so a relay replay cannot stall the producer; a
+re-signed transaction with the same txid is judged afresh. A wallet with
 nothing may publish a kind 23501 event, content an address, tagged the same way; a faucet that
 follows the relay may answer it with a payment, at its own limits. A wallet with no node may
 publish a signed *parent* transaction as a kind 23503 event, content the hex, tagged the same
