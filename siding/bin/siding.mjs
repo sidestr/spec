@@ -284,7 +284,7 @@ if (cmd === 'produce') {
   const evmRpc = engine.rules?.evm ? makeEvmRpc({ s, chain, evm: engine.rules.evm, carrier, log }) : null; if (evmRpc) log(`evm: chain id ${engine.rules.evm.chainId}, JSON-RPC at POST /evm, 1 sat = 1 gwei, reserve ${engine.rules.evm.reserve.slice(0, 12)}…`);
   const port = Number(args.port ?? 3450);
   http.createServer(async (req, res) => {
-    const path = req.url.split('?')[0]; const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'range, content-type', 'access-control-allow-methods': 'GET, POST, OPTIONS' };
+    const path = req.url.split('?')[0]; const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'range, content-type, if-none-match', 'access-control-expose-headers': 'etag, accept-ranges, content-range', 'access-control-allow-methods': 'GET, POST, OPTIONS' };
     const json = (code, o) => { res.writeHead(code, { 'content-type': 'application/json', ...cors }); res.end(JSON.stringify(o)); };
     if (req.method === 'OPTIONS') { res.writeHead(204, cors); return res.end(); }
     if (evmRpc && path === '/evm' && req.method === 'POST') { let body = ''; for await (const c of req) { body += c; if (body.length > 1048576) { req.destroy(); return json(413, { error: 'too large' }); } } let parsed; try { parsed = JSON.parse(body); } catch { return json(400, { jsonrpc: '2.0', id: null, error: { code: -32700, message: 'parse error' } }); } return json(200, await evmRpc(parsed)); }
@@ -295,7 +295,9 @@ if (cmd === 'produce') {
     if (path === '/' || path === '/status.json') return json(200, { chain: chain.id, parent: chain.parent, ...s.tip(), coins: s.utxo.size, mempool: s.mempool.size, rejected: s.rejected.size, minFeeRate: s.minFeeRate(), relays, announce: mirrors.length ? { mirrors, announced } : null, pegouts: { burned: s.pegouts().length, paid: Object.keys(outState.paid).length, min: s.pegoutMin(), payer: parent?.wallet ?? null }, checkpoints: ckptEvery ? { every: ckptEvery, count: ck.checkpoints.length, last: ck.checkpoints.at(-1) ?? null } : null, desk: desk ? { rate: desk.policy.rate, maturity: desk.policy.maturity, coinbases: desk.coinbases.length, pledges: Object.keys(desk.pledges).length, paid: Object.values(desk.pledges).reduce((a, p) => a + p.paid, 0) } : null, pegins: parent ? { scanned: pegState.scanned, known: pegState.pegins.length, claimed: pegState.pegins.filter((p) => s.claimed(p.txid, p.vout)).length, pending: pegState.pegins.filter((p) => !p.refused && !s.claimed(p.txid, p.vout)).length } : null, signer: pub, genesis: s.genesisHash, interval: interval / 1000 });
     if (path === '/chain.json') return json(200, { ...chain, genesisHash: s.genesisHash });
     if (path === '/tip') return json(200, s.tip());
-    if (path === '/blocks.json') return json(200, s.index);
+    if (path === '/blocks.json') { // the index changes only with a block: an ETag of the tip lets a client's refresh cost a 304
+      const tag = `"${s.index.to}-${(s.index.blocks.at(-1)?.hash ?? '').slice(0, 16)}"`; if (req.headers['if-none-match'] === tag) { res.writeHead(304, { etag: tag, ...cors }); return res.end(); }
+      res.writeHead(200, { 'content-type': 'application/json', etag: tag, ...cors }); return res.end(JSON.stringify(s.index)); }
     if (path === '/blocks.dat') {
       const size = statSync(s.dat).size; const m = /bytes=(\d+)-(\d*)/.exec(req.headers.range ?? ''); const start = m ? Number(m[1]) : 0, end = m && m[2] ? Number(m[2]) : size - 1;
       res.writeHead(m ? 206 : 200, { 'content-type': 'application/octet-stream', 'accept-ranges': 'bytes', 'content-length': end - start + 1, ...(m ? { 'content-range': `bytes ${start}-${end}/${size}` } : {}), ...cors });
