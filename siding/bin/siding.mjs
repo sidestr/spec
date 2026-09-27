@@ -42,7 +42,7 @@ import { resolveParent } from '../lib/parents.mjs';
 import { signKeyPath, usesUnifiedSighash } from '../lib/txsign.mjs';
 import { makeSigner, loadKey } from '../lib/sign.mjs';
 import { makeEvents, subscribe, publish, TX_KIND, PARENT_TX_KIND } from '../lib/relay.mjs';
-import { makeParent, scanPegins, pegStatus, payPegout, paidPegouts, lockOutputs, relayParentTx } from '../lib/parent.mjs';
+import { makeParent, scanPegins, newPegins, pegStatus, payPegout, paidPegouts, lockOutputs, relayParentTx } from '../lib/parent.mjs';
 import { verifyPledge, PLEDGE_KIND, maturityOf } from '../lib/pledge.mjs';
 import { sendCheckpoint, checkpointStatus, sentCheckpoints } from '../lib/checkpoint.mjs';
 import { loadParentKernel } from '../lib/engine.mjs';
@@ -184,7 +184,7 @@ if (cmd === 'produce') {
       if (tip > pegState.scanned) {
         const found = await scanPegins(parent, { chainId: chain.id, from: pegState.scanned + 1, to: tip, pegScript, onCoinbase: desk ? (c) => { if (c.height >= desk.policy.lockedFrom && !desk.coinbases.some((x) => x.txid === c.txid && x.vout === c.vout)) desk.coinbases.push(c); } : null });
         if (desk) await saveDesk();
-        for (const p of found) if (!pegState.pegins.some((q) => q.txid === p.txid && q.vout === p.vout)) { pegState.pegins.push(p); log(`peg-in ${p.txid.slice(0, 16)}…:${p.vout}: ${p.amount} sats to ${p.script.slice(0, 12)}…, parent h${p.height}`); }
+        for (const p of newPegins(found, pegState.pegins, (txid) => s.claimedTx(txid))) { pegState.pegins.push(p); log(`peg-in ${p.txid.slice(0, 16)}…:${p.vout}: ${p.amount} sats to ${p.script.slice(0, 12)}…, parent h${p.height}`); }
         pegState.scanned = tip; await savePegs();
       }
       // unclaimed peg-ins are locked in the peg wallet so no payment of ours spends them before the claim
@@ -193,6 +193,7 @@ if (cmd === 'produce') {
       const claims = [], need = chain.pegConfirmations ?? 6;
       for (const p of pegState.pegins) {
         if (p.refused || s.claimed(p.txid, p.vout)) continue;
+        if (s.claimedTx(p.txid)) { p.refused = 'another output of this transaction is claimed'; log(`peg-in ${p.txid.slice(0, 16)}…:${p.vout}: another output of it is claimed already; not claimable`); continue; }
         const st = await pegStatus(parent, p); if (!st.unspent) { p.refused = 'spent on the parent'; log(`peg-in ${p.txid.slice(0, 16)}…:${p.vout} is spent on the parent; not claimable`); continue; }
         // a pledged reward arriving at maturity was paid for already: it is claimed to the float, not to the marker's payee
         const pledged = desk ? pledgedByPayTxid().get(p.txid) : null;

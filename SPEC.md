@@ -154,7 +154,10 @@ A peg-in is a parent-chain transaction that:
    where the coins appear on the sidechain. The peg output is the taproot output the peg
    holders own (level 1: the producer's parent wallet; level 2: the challenge script), at any
    position: a wallet may place its change before it. A marker transaction that pays the peg
-   holders nothing is not a peg-in. The signer announces the script a peg-in should pay with
+   holders nothing is not a peg-in. The peg wallet's own change is never the peg, and a
+   transaction the peg wallet itself funded is a peg-in only by the announced script: the peg
+   holders paying themselves is not a deposit. A marker transaction is claimed at most once,
+   whatever a later scan finds. The signer announces the script a peg-in should pay with
    every tip (`peg` tag, section 11): level 2 the challenge, level 1 one address of the producer's
    parent wallet, kept for the chain's life unless rotated. An output paying the announced
    script is the peg wherever it sits, so a wallet builds a peg-in from the announcement alone. The script is written as raw bytes (61 bytes in

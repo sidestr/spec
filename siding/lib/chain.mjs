@@ -128,6 +128,7 @@ export class Siding {
   // SPEC 4: a block on the tip with everything in the mempool, fees to the signer, signed
   // SPEC 6: a claim pays the peg's amount to the script the peg-in named, followed by its marker
   claimed(txid, vout) { return this.engine.sidestr?.claims.has(outpointOf(txid, vout)) ?? false; }
+  claimedTx(txid) { for (const k of this.engine.sidestr?.claims.keys() ?? []) if (k.startsWith(txid + ':')) return true; return false; }
   // the next block, unsigned: the mempool in order, fees to the challenge, the claims (SPEC 4, 6)
   async buildNext({ time = Math.floor(Date.now() / 1000), claims = [], txs: only = null } = {}) {
     const tip = this.tip(); const t = Math.max(time, tip.time + 1);

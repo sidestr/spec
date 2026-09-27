@@ -40,9 +40,20 @@ export async function relayParentTx(parent, hex, { seen = new Set(), maxBytes = 
   const [t] = await parent.rpc('testmempoolaccept', [[hex]]); if (!t.allowed) return { ok: false, txid, reason: `${t['reject-reason'] ?? 'refused'}${t['reject-details'] ? ': ' + t['reject-details'] : ''}` };
   await parent.rpc('sendrawtransaction', [hex]); return { ok: true, txid, vsize: t.vsize ?? null, fee: t.fees?.base ?? null };
 }
-// does the peg wallet own this parent address (its own keys, or the imported k-of-n descriptor)
-async function ownedByPegWallet(parent, address) { try { const i = await parent.walletRpc('getaddressinfo', [address]); return !!(i.ismine || i.iswatchonly || i.solvable); } catch { return false; } }
-// pegScript: the script the signer announces as the peg (SPEC 6); an output paying it is the peg wherever it sits
+// does the peg wallet own this parent address (its own keys, or the imported k-of-n descriptor), and is it the wallet's own change
+async function pegWalletView(parent, address) { try { const i = await parent.walletRpc('getaddressinfo', [address]); return { owned: !!(i.ismine || i.iswatchonly || i.solvable), change: !!i.ischange }; } catch { return { owned: false, change: false }; } }
+// did the peg wallet itself pay for this transaction (issue 15: the peg holders paying themselves is not a deposit)
+async function fundedByPegWallet(parent, txid) { try { const t = await parent.walletRpc('gettransaction', [txid]); return (t.details ?? []).some((d) => d.category === 'send'); } catch { return false; } }
+// which of the scanned peg-ins are new: one claim per marker transaction, whatever a re-scan finds (issue 15).
+// `known` are the peg-ins already recorded, `claimedTx(txid)` says whether the chain has claimed any output of it.
+export function newPegins(found, known, claimedTx = () => false) {
+  const out = []; const seen = new Set(known.map((q) => q.txid));
+  for (const p of found) { if (seen.has(p.txid) || claimedTx(p.txid)) continue; seen.add(p.txid); out.push(p); }
+  return out;
+}
+// pegScript: the script the signer announces as the peg (SPEC 6); an output paying it is the peg wherever it sits.
+// Without a match, with a peg wallet: the first taproot output the wallet owns that is not its own change, and only
+// in a transaction the wallet did not fund. Without a wallet: the first taproot output.
 export async function scanPegins(parent, { chainId, from, to, pegScript = null, onBlock = () => {}, onCoinbase = null }) {
   const found = [];
   for (let h = from; h <= to; h++) {
@@ -53,7 +64,7 @@ export async function scanPegins(parent, { chainId, from, to, pegScript = null, 
       let script = null; for (const o of tx.vout) { const s = parsePegMarker(o.scriptPubKey.hex, chainId); if (s) { script = s; break; } }
       if (!script) continue;
       const taproots = tx.vout.filter((o) => o.scriptPubKey.type === 'witness_v1_taproot'); let peg = pegScript ? taproots.find((o) => o.scriptPubKey.hex?.toLowerCase() === pegScript.toLowerCase()) ?? null : null;
-      if (!peg && parent.walletRpc) { for (const o of taproots) { if (o.scriptPubKey.address && await ownedByPegWallet(parent, o.scriptPubKey.address)) { peg = o; break; } } } else if (!peg && !parent.walletRpc) peg = taproots[0] ?? null;
+      if (!peg && parent.walletRpc) { if (!(await fundedByPegWallet(parent, tx.txid))) for (const o of taproots) { if (!o.scriptPubKey.address) continue; const v = await pegWalletView(parent, o.scriptPubKey.address); if (v.owned && !v.change) { peg = o; break; } } } else if (!peg && !parent.walletRpc) peg = taproots[0] ?? null;
       if (!peg) continue; // a marker beside nothing the peg wallet owns is not a peg-in
       found.push({ txid: tx.txid, vout: peg.n, amount: Math.round(peg.value * 1e8), script, height: h, parentAddress: peg.scriptPubKey.address ?? null });
     }
