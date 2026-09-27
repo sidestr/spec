@@ -49,6 +49,8 @@ Everything else, heights, previous hash, timestamps, transaction validity, is th
 
 A producer makes a block when it has transactions and otherwise idles, with a heartbeat block often enough that timelocks and maturity keep moving. Blocks are receipts for transactions, not a clock.
 
+Validity and order are separate questions here, and only one of them is fixed. What a block may contain is the parent's rules plus the three checks above, and every reader checks it. Who makes the next block, and how the signers agree on it, is the chain's ordering: the challenge, and the round by which a block is proposed and sealed. One key is an ordering. A threshold of keys with a round over the relay is another. A leader schedule, a stake-weighted challenge with a slashing rule, or a proof-of-work requirement are others, and a chain document names the one it uses. An ordering may change how soon a block comes and who can stall the chain. It may not change what is valid. An ordering that asks the reader to trust the orderers for validity is a different system.
+
 ## 4. Pegs
 
 A peg-in is a transaction on the parent that pays a taproot output the peg holder can spend and carries an OP_RETURN naming the chain and the script where the coins should appear on it. The taproot output's script path is a refund: the pegger's own key, spendable after refundBlocks. If the chain never claims the peg, or dies, the coins come back to whoever pegged them after the timelock, with no signer involved. A dead sidechain costs time, not coins.
