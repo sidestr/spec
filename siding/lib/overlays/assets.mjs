@@ -17,11 +17,12 @@ export class CarryView {
   before(k) { return this.spent.get(k) ?? this.get(k); } // what an outpoint carried, even if this view has spent it
 }
 
-export function assetsOverlay(chain, { pools = null } = {}) {
+export function assetsOverlay(chain, { pools = null, marketMint = null } = {}) {
   const carried = new Map();   // outpoint -> Map(asset id -> amount), for unspent tallied outputs
   const byHeight = new Map();  // height -> { added: [outpoints], removed: [[outpoint, carry]] }, so one height re-validated is idempotent
   const issued = new Map();    // asset id -> { ticker, decimals, height }
   const isShare = (asset, tx, txid, cls) => !!pools && (pools.has(asset) || (asset === txid && cls.pools.some((p) => p.pool === 'self')));
+  const isMint = (asset, cls) => !!marketMint && cls.markets.some((r) => r.kind === 'split' && marketMint(asset, r.market)); // a split mints its market's YES and NO (proposals/markets.md)
   // check one transaction against a view; returns { ok, error, out: Map(vout -> Map(asset -> amount)) } and, when ok, writes its outputs into the view
   function check(tx, txid, view, { coinbase = false } = {}) {
     const cls = classify(tx); const bad = (error) => ({ ok: false, error });
@@ -46,6 +47,7 @@ export function assetsOverlay(chain, { pools = null } = {}) {
     for (const [asset, n] of assigned) {
       if (asset === txid && cls.issues.length) continue;                 // issuance: created from nothing
       if (isShare(asset, tx, txid, cls)) continue;                       // shares: the pool rule accounts
+      if (isMint(asset, cls)) continue;                                 // outcomes minted by a split: the markets rule accounts
       if (n > (inCarry.get(asset) ?? 0)) return bad(`assigns ${n} of ${asset.slice(0, 8)}… but carries ${inCarry.get(asset) ?? 0}`);
     }
     for (const inp of tx.inputs) view.spend(key(inp.prevout.txid, inp.prevout.vout)); // spent: carries nothing now

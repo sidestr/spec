@@ -20,14 +20,24 @@ export function parseTally(text) {
   for (const part of m[2].split(',')) { const p = /^(\d{1,5})=(\d+)$/.exec(part); if (!p) return null; const vout = Number(p[1]), a = amount(p[2]); if (a === null || seen.has(vout)) return null; seen.add(vout); assigns.push({ vout, amount: a }); }
   return { asset: m[1], assigns };
 }
+// markets (proposals/markets.md): market:self:<vout>:<resolver>:<expiry>:<grace>, question:<text>, split|merge|redeem:<market>:<vout>, resolve:<market>:<yes|no>
+export function parseMarket(text) {
+  let m = /^market:self:(\d{1,5}):([0-9a-f]{64}):(\d{1,9}):(\d{1,9})$/.exec(text); if (m) return { kind: 'open', vout: Number(m[1]), resolver: m[2].toLowerCase(), expiry: Number(m[3]), grace: Number(m[4]) };
+  m = /^(split|merge|redeem):([0-9a-f]{64}):(\d{1,5})$/.exec(text); if (m) return { kind: m[1], market: m[2].toLowerCase(), vout: Number(m[3]) };
+  m = /^resolve:([0-9a-f]{64}):(yes|no)$/.exec(text); if (m) return { kind: 'resolve', market: m[1].toLowerCase(), outcome: m[2] };
+  return null;
+}
+export function parseQuestion(text) { const q = text.slice('question:'.length); return q.length && enc.encode(q).length <= 200 ? { text: q } : null; }
 export function parsePool(text) { const m = /^pool:([0-9a-f]{64}|self):(\d{1,5})$/.exec(text); return m ? { pool: m[1], vout: Number(m[2]) } : null; }
 // every record of a transaction, classified; `bad` lists records that look like ours but do not parse
 export function classify(tx) {
-  const out = { issues: [], tallies: [], pools: [], bad: [] };
+  const out = { issues: [], tallies: [], pools: [], markets: [], questions: [], bad: [] };
   for (const { vout, text } of recordsOf(tx)) {
     if (text.startsWith('issue:')) { const r = parseIssue(text); r ? out.issues.push({ vout, ...r }) : out.bad.push(text); }
     else if (text.startsWith('tally:')) { const r = parseTally(text); r ? out.tallies.push({ vout, ...r }) : out.bad.push(text); }
     else if (text.startsWith('pool:')) { const r = parsePool(text); r ? out.pools.push({ vout, ...r }) : out.bad.push(text); }
+    else if (/^(market|split|merge|redeem|resolve):/.test(text)) { const r = parseMarket(text); r ? out.markets.push({ vout: r.vout ?? vout, ...r }) : out.bad.push(text); }
+    else if (text.startsWith('question:')) { const r = parseQuestion(text); r ? out.questions.push({ vout, ...r }) : out.bad.push(text); }
   }
   return out;
 }

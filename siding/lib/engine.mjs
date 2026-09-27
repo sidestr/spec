@@ -16,7 +16,7 @@ export async function loadEngine(chain) {
   const { createKernel } = await import(`${SCHEMA}/codec/kernel.js`);
   const [pow, hash, secp, nostr] = await Promise.all([import(parent.family === 'blake2b' ? `${SCHEMA}/codec/pow/knots-header-v2.js` : `${SCHEMA}/codec/pow/sha256d.js`).catch((e) => { if (parent.family === 'blake2b') throw e; return null; }), import(`${SCHEMA}/codec/hash.js`), import(`${SCHEMA}/codec/secp256k1.js`), import(`${SCHEMA}/codec/nostr.js`)]);
   const load = async (p) => JSON.parse(await readFile(`${SCHEMA}/${p}`, 'utf8'));
-  const sidestr = sidestrOverlay(chain, { hash, secp }); const rules = rulesFor(chain); const overlays = [sidestr, ...rules.overlays];
+  const sidestr = sidestrOverlay(chain, { hash, secp }); const rules = rulesFor(chain, { hash }); const overlays = [sidestr, ...rules.overlays];
   if (parent.family === 'blake2b') { const { knotsBlake2b } = await import(`${SCHEMA}/codec/overlays/knots-blake2b.js`); overlays.unshift(knotsBlake2b(await load('schema/overlays/knots-blake2b.jsonld'))); }
   const k = createKernel({ core: await load('schema/core.jsonld'), proof: await load('schema/proof.jsonld'), script: await load('schema/script.jsonld'),
     chain: await load('schema/chain.jsonld'), validate: await load('schema/validate.jsonld'), network: chain.id, overlays });

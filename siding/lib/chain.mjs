@@ -102,6 +102,8 @@ export class Siding {
     view = view ?? new r.assets.CarryView(r.assets.carried);
     const a = r.assets.check(tx, txid, view); if (!a.ok) return { ok: false, rule: 'assets', error: a.error };
     if (r.pool) { const p = r.pool.check(tx, txid, view); if (!p.ok) return { ok: false, rule: 'pool', error: p.error }; if (p.effect && poolLog) poolLog.push(p.effect); }
+    if (r.markets) { const scriptOf = (prev) => this.utxo.get(keyOf(prev))?.output.scriptPubKey ?? this.mempool.get(prev.txid)?.outputs[prev.vout]?.scriptPubKey ?? null;
+      const mk = r.markets.check(tx, txid, view, { height: this.height() + 1, scriptOf }); if (!mk.ok) return { ok: false, rule: 'markets', error: mk.error }; if (mk.effect && poolLog) poolLog.push({ market: mk.effect }); }
     return { ok: true };
   }
   // the mempool in order, each transaction checked against the state the ones before it leave; the losers are evicted
@@ -116,8 +118,10 @@ export class Siding {
   async sequenced() {
     const r = this.engine.rules; const txs = [...this.mempool.entries()]; if (!r?.assets) return txs.map(([, tx]) => tx);
     const view = new r.assets.CarryView(r.assets.carried); const saved = r.pool ? new Map([...r.pool.pools].map(([k, v]) => [k, { ...v }])) : null; const savedBy = r.pool ? new Map(r.pool.byOutpoint) : null; const out = [];
-    for (const [txid, tx] of txs) { const log = []; const v = this.rulesCheck(tx, txid, view, log); if (v.ok) { out.push(tx); for (const e of log) r.pool.apply(e, null, null); } else { this.log(`mempool: ${txid.slice(0, 16)}… dropped, ${v.rule}: ${v.error}`); this.mempool.delete(txid); for (const i of tx.inputs) this.mempoolSpent.delete(keyOf(i.prevout)); } }
+    const savedM = r.markets ? new Map([...r.markets.markets].map(([k, v]) => [k, { ...v }])) : null; const savedMBy = r.markets ? new Map(r.markets.byOutpoint) : null;
+    for (const [txid, tx] of txs) { const log = []; const v = this.rulesCheck(tx, txid, view, log); if (v.ok) { out.push(tx); for (const e of log) { if (e.market) r.markets.apply(e.market, null, null); else r.pool.apply(e, null, null); } } else { this.log(`mempool: ${txid.slice(0, 16)}… dropped, ${v.rule}: ${v.error}`); this.mempool.delete(txid); for (const i of tx.inputs) this.mempoolSpent.delete(keyOf(i.prevout)); } }
     if (r.pool) { r.pool.pools.clear(); for (const [k, v] of saved) r.pool.pools.set(k, v); r.pool.byOutpoint.clear(); for (const [k, v] of savedBy) r.pool.byOutpoint.set(k, v); }
+    if (r.markets) { r.markets.markets.clear(); for (const [k, v] of savedM) r.markets.markets.set(k, v); r.markets.byOutpoint.clear(); for (const [k, v] of savedMBy) r.markets.byOutpoint.set(k, v); }
     return out;
   }
   pegoutMin() { return Number(this.chain.pegoutMin ?? 10000); }

@@ -51,7 +51,7 @@ Nothing to add. A pool (assets-and-pools.md section 3) between YES and sats, and
 
 ## 6. Activation
 
-A chain names the rule as `"markets"` in `rules`, from genesis, or as `{ "name": "markets", "from": <height> }` on a running chain: the rule then keeps no state and accepts every block below `from`, and applies from `from`. A validator without the rule refuses the chain by name either way (assets-and-pools.md, opening). This is the first use of an activation height in a chain document; the general mechanism, rule documents on the relay adopted per node, is SPEC 8 and is not needed for it.
+A chain names the rule as `"markets"` in `rules`, from genesis, or as `{ "name": "markets", "from": <height> }` on a running chain: the rule then keeps no state and accepts every block below `from`, and applies from `from`. The history below `from` cannot carry market records, and need not be checked for them: under the `assets` rule alone a split mints from nothing and is invalid, so no such block exists on a chain that was valid before adoption. A validator without the rule refuses the chain by name either way (assets-and-pools.md, opening). This is the first use of an activation height in a chain document; the general mechanism, rule documents on the relay adopted per node, is SPEC 8 and is not needed for it.
 
 ## 7. Threats
 
