@@ -1,0 +1,24 @@
+{
+ "id": "sidestr:predict",
+ "name": "predict",
+ "parent": "txbt4",
+ "comment": "A prediction-market chain beside the BLAKE2b testnet4 (proposals/markets.md): issued assets, pools, and markets whose YES and NO are minted in pairs against sats and settled by a named resolver. One signer, hourly blocks. Coins with no value.",
+ "challenge": "5120a83b7f8363b40b20e353fbb5d6cb87a661b46c83e92249da29d3e12ed8e1d237",
+ "powLimit": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+ "addressPrefix": "pr",
+ "magic": "714c23f2",
+ "pegConfirmations": 1,
+ "refundBlocks": 10000,
+ "pegoutBlocks": 144,
+ "pegoutMin": 10000,
+ "minFeeRate": 1,
+ "genesisTime": 1790540169,
+ "pegs": [],
+ "signer": "a83b7f8363b40b20e353fbb5d6cb87a661b46c83e92249da29d3e12ed8e1d237",
+ "rules": [
+  "assets",
+  "pool",
+  "markets"
+ ],
+ "genesisHash": "342dbb984cb520bf32a08db19411bc1e9b74336c208d8400940f3682af8c21bc"
+}
