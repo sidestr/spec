@@ -53,6 +53,22 @@ Nothing to add. A pool (assets-and-pools.md section 3) between YES and sats, and
 
 A chain names the rule as `"markets"` in `rules`, from genesis, or as `{ "name": "markets", "from": <height> }` on a running chain: the rule then keeps no state and accepts every block below `from`, and applies from `from`. The history below `from` cannot carry market records, and need not be checked for them: under the `assets` rule alone a split mints from nothing and is invalid, so no such block exists on a chain that was valid before adoption. A validator without the rule refuses the chain by name either way (assets-and-pools.md, opening). This is the first use of an activation height in a chain document; the general mechanism, rule documents on the relay adopted per node, is SPEC 8 and is not needed for it.
 
+## 6.1 Disputes (draft, not built)
+
+A second rule, `disputes`, that a chain may name beside `markets`, makes the resolver's answer contestable without changing the `markets` rule: it reads the resolution record as it stands.
+
+- **The market document** gains two fields in its `market:` record, given as a second record `dispute:<window>:<bond>:<panel>`: the number of blocks an answer waits before it is final, the bond in sats a challenge must lock, and the panel that settles a challenge, one key or `k/n` keys as hex joined by `,`.
+- **An answer is provisional** for `window` blocks after its `resolve:`. During the window the `markets` rule still refuses `redeem:` (the `disputes` rule asks it to treat the market as open until the window passes; in practice the page checks, and a `redeem:` inside the window is invalid under `disputes`).
+- **A challenge** is a transaction carrying `challenge:<market>:<vout>:<yes|no>` whose named output is a **bond coin**, script `51`, value at least `bond`, opened within the window. One challenge per market; a second is invalid.
+- **Settlement** is a transaction carrying `settle:<market>:<yes|no>` in which inputs spend coins paying `k` of the panel's keys, the same test as a resolution. It names the final winner. If the panel sides with the challenger, the bond returns to the challenger and the resolver's answer is replaced; if with the resolver, the bond coin is spent to the resolver's key in the same transaction. A panel that never settles: after `window` more blocks the challenge lapses, the resolver's answer stands, and the bond returns.
+- **The `markets` rule is untouched.** `disputes` only delays and, on settlement, rewrites the market's winner in the validator's state; both rules share the market map.
+
+What this does not solve: a panel is a second named trust. A market that wants no panel names none and has no disputes; that is the level-1 market, and it should say so.
+
+## 6.2 Several outcomes (draft, not built)
+
+The same rule with `n` outcomes: `market:self:<vout>:<resolver>:<expiry>:<grace>:<n>` for `2 ≤ n ≤ 16`, outcome `i` being the asset `sha256("o:" ‖ i ‖ ":" ‖ <market id>)`, outcome 0 being YES and the market id itself for `n = 2` so a binary market is unchanged. Split mints one unit of every outcome per sat; merge burns one of each; `resolve:<market>:<i>` names the winner; redeem pays the winner one for one; refund pays `1/n` sat per unit of any outcome. A pool per outcome prices each; the `n` prices need not sum to one, and split and merge keep them near it. Nothing else changes.
+
 ## 7. Threats
 
 - **The resolver lies.** Possible, and the whole trust of the market. Visible to everyone, attached to a key forever; the dispute rule above is the remedy when there is one.
