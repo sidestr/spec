@@ -8,6 +8,8 @@
 //       a whole chain: document at chains/<name>/chain.json, signer key, genesis, and the lines to run and mirror it
 //   siding key --create [--chain chain.json]        the signer key (~/.sidestr/<name>.key) and its challenge
 //   siding genesis --chain chain.json --dir DIR     write block 0
+//   siding chain-event --chain chain.json [--key-file F] [--relay wss://a,wss://b] [--out chain-event.json]
+//       the document as a kind 3500 event (SPEC 3): its id is the chain's hash; written beside the document and published
 //   siding produce --chain chain.json --dir DIR [--port 3450] [--interval 600] [--tx-interval 30]
 //   siding sync --url http://host:3450 --dir DIR    validate a producer's chain into DIR
 //   siding send --url http://host:3450 --chain chain.json --to <address or script> --amount <sats> [--fee <sats>]
@@ -48,7 +50,8 @@ import { sendCheckpoint, checkpointStatus, sentCheckpoints } from '../lib/checkp
 import { loadParentKernel } from '../lib/engine.mjs';
 import { buildSpend, deliver, resolveTo } from '../lib/spend.mjs';
 import { FAUCET_KIND, makeEvents as mkEvents } from '../lib/relay.mjs';
-import { tipEvent, TIP_HEADERS } from '../lib/announce.mjs';
+import { tipEvent, TIP_HEADERS, chainEvent, parseChainEvent } from '../lib/announce.mjs';
+import { dirname, join } from 'node:path';
 import { Siding } from '../lib/chain.mjs';
 import { makeRound } from '../lib/round.mjs';
 import { federation, partialSignature, sealFederated, wif, pegDescriptor } from '../lib/federation.mjs';
@@ -93,7 +96,8 @@ next:
   3. on the parent: a wallet named ${name}-peg for the peg outputs (createwallet), and a peg-in is any output to one of its
      addresses with OP_RETURN pegin:${doc.id}:<sidechain script bytes>; the producer claims it at ${doc.pegConfirmations} confirmations
   4. explorer ?chain=${doc.id}, wallet ?chain=${doc.id}; the directory lists it after the first announcement
-  5. commit ${out}: the document is the chain's identity (its genesis hash is derived from it)`);
+  5. commit ${out}: the document is the chain's identity (its genesis hash is derived from it)
+  6. siding chain-event --chain ${out} --key-file ${kp} --relay wss://a,wss://b: the document as an event (SPEC 3); its id is the chain's hash, announced with every tip`);
   process.exit(0);
 }
 const chainFile = args.chain ?? new URL('../chain.json', import.meta.url).pathname;
@@ -125,6 +129,18 @@ if (cmd === 'peg-wallet') {
   console.log(JSON.stringify({ wallet: args.name, signer: pub, imported: r[0]?.success, pegAddress: addr, challenge: fed.challenge, note: 'the same script as the chain challenge: what pays this address on the parent is a peg-in' }, null, 1)); process.exit(0);
 }
 
+// SPEC 3 (0.0.5): the chain document as an immutable event; its id is the chain's hash. Written as chain-event.json beside
+// the document (a mirror serves it as it serves chain.json), published to the relays when named, and announced by `produce`
+if (cmd === 'chain-event') {
+  const key = await loadKey(keyPath, { signer }); const pub = signer.pubkeyOf(key);
+  const fed = engine.sidestr.federation; if (fed ? !fed.signers.includes(pub) : chain.challenge !== '5120' + pub) throw new Error(`the key at ${keyPath} is not ${fed ? 'one of the chain\'s signers' : 'the chain\'s signer'}`);
+  const ev = chainEvent({ events: mkEvents({ signer, hash: engine.hash }), key, chain }); parseChainEvent(ev, { verify: engine.nostr.verifyNostrEvent });
+  const out = args.out ?? join(dirname(chainFile), 'chain-event.json'); await writeFile(out, JSON.stringify(ev, null, 2) + '\n');
+  const relays = String(args.relay ?? '').split(',').map((x) => x.trim()).filter(Boolean); const res = relays.length ? await publish({ relays, event: ev }) : {};
+  console.log(JSON.stringify({ hash: ev.id, alias: chain.id, signer: pub, written: out, published: res, note: 'the hash is the chain\'s identity: the tip announces it (e), a tweak commits to it; the alias stays for people and tags' }, null, 2));
+  process.exit(0);
+}
+
 if (cmd === 'produce') {
   const key = await loadKey(keyPath, { signer }); const pub = signer.pubkeyOf(key);
   const fed = engine.sidestr.federation;
@@ -136,11 +152,13 @@ if (cmd === 'produce') {
   // SPEC 6: the script a peg-in pays, announced with every tip. Level 2: the challenge (the k-of-n script). Level 1: one
   // labelled address in the peg wallet, looked up once the parent is open (below), then the tip is re-announced with it.
   let pegScript = fed ? chain.challenge.toLowerCase() : null;
+  // SPEC 3: the chain's hash, announced with every tip (`e`) when the document has been published as an event (siding chain-event)
+  let chainHash = null; { const f = args['chain-event'] ?? join(dirname(chainFile), 'chain-event.json'); if (existsSync(f)) { const d = parseChainEvent(JSON.parse(await readFile(f, 'utf8')), { verify: engine.nostr.verifyNostrEvent }); if (d.alias !== chain.id) throw new Error(`${f} is the event of ${d.alias}, not ${chain.id}`); chainHash = d.hash; log(`chain hash ${chainHash} (${f})`); } else log(`no chain-event.json beside the document: tips carry no chain hash (siding chain-event makes one)`); }
   let announceRetryAt = 0, announcing = false; // a failed announcement is retried a minute later; one in flight at a time
   const announce = async () => {
     if (!relays.length || !mirrors.length || announcing) return; const tip = s.tip(); if (tip.height === announced || Date.now() < announceRetryAt) return; announcing = true; try {
     const from = Math.max(0, tip.height - TIP_HEADERS + 1); const headersHex = []; for (let h = from; h <= tip.height; h++) headersHex.push(engine.k.codec.encodeHex('BlockHeader', s.node.headers[h]));
-    const ev = tipEvent({ events: mkEvents({ signer, hash: engine.hash }), key, chainId: chain.id, headersHex, tip: tip.height, mirrors, pegScript });
+    const ev = tipEvent({ events: mkEvents({ signer, hash: engine.hash }), key, chainId: chain.id, headersHex, tip: tip.height, mirrors, pegScript, chainHash });
     const res = await publish({ relays, event: ev }); const okc = Object.values(res).filter((r) => r === 'ok').length; if (okc) announced = tip.height; else announceRetryAt = Date.now() + 60000;
     log(`announced tip ${tip.height} ${tip.hash.slice(0, 16)}… (kind 33333, ${headersHex.length} headers, ${mirrors.length} mirror(s)) to ${okc}/${relays.length} relay(s)`);
     } finally { announcing = false; }
