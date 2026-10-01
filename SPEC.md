@@ -51,7 +51,7 @@ chain's network:
 
 | parameter | meaning |
 |---|---|
-| `parent` | the parent chain: a short alias from the table in 3.2 (`txbt4`, `btc`, `ltc`…), or a sidestr chain id for a nested chain (section 3.1) |
+| `parent` | the parent chain: a short alias from the table in 3.2 (`txbt4`, `btc`, `ltc`…), or a sidestr chain's hash (its chain event's id, below) for a nested chain (section 3.1) |
 | `challenge` | a script; a block is valid when its signature satisfies it (section 4) |
 | `powLimit` | blocks must still meet this proof of work, cheap enough for a laptop, so a block costs something without keys; no retarget |
 | `subsidy` | 0 |
@@ -68,7 +68,9 @@ value that names this chain and no other: it is what the tip announcement points
 client verifies the document against, and what anything that must commit to a chain uses (a
 peg-in tweak, issue #23; a nested chain's `parent`). The event's pubkey is the signer; the
 document carries no `signer` field. A chain is final once its document is signed: re-signing
-gives a new id, which is a new chain.
+gives a new id, which is a new chain. A document cannot contain its own id, so inside it (the
+genesis's `chain`, section 5) and in everything written before the hash exists (tags, `OP_RETURN`s)
+the chain is named by its alias; the hash is what those are resolved to.
 
 Everything the overlay does not set is inherited from the parent: header format and
 proof-of-work hash, script rules, weight limits, the unified sighash where the parent has it.
@@ -154,7 +156,7 @@ The genesis document lists the peg outputs the chain starts from, and the genesi
 exactly those amounts:
 
 ```json
-{ "chain": "<chain id>", "parent": "<parent id>",
+{ "chain": "<chain alias>", "parent": "<parent id>",
   "pegs": [ { "txid": "…", "vout": 0, "amount": 2500000000, "script": "<sidechain output script>" } ],
   "challenge": "<script hex>", "refundBlocks": 10000 }
 ```
@@ -173,7 +175,7 @@ A peg-in is a parent-chain transaction that:
 1. pays a **peg output**: a taproot output whose key path is the peg holders' key and whose
    script path is `and_v(v:pk(refund), older(refundBlocks))`, so that the pegger's refund key
    can sweep it after `refundBlocks` unspent;
-2. carries an `OP_RETURN` with `pegin:<chain id>:<sidechain output script>`, naming
+2. carries an `OP_RETURN` with `pegin:<chain alias>:<sidechain output script>`, naming
    where the coins appear on the sidechain. The peg output is the taproot output the peg
    holders own (level 1: the producer's parent wallet; level 2: the challenge script), at any
    position: a wallet may place its change before it. A marker transaction that pays the peg
@@ -212,7 +214,7 @@ A peg-out is a sidechain transaction paying a **burn output**: `OP_RETURN` with 
 the coinbase, a malformed script or a value below the minimum makes the block invalid
 (`sidestr:rule-pegouts`). The peg holders then pay that script that value on the parent from
 the peg outputs, the parent's fee from the same outputs, in a transaction that also carries
-`OP_RETURN` `pegout:<chain id>:` followed by the sidechain txid as 32 raw bytes, so the
+`OP_RETURN` `pegout:<chain alias>:` followed by the sidechain txid as 32 raw bytes, so the
 record fits the parent's data limit. A validator with a parent view checks that every burn is
 paid within `pegoutBlocks` parent blocks and publishes the ones that are not. The reference
 producer pays each burn as soon as the block holding it is on the chain, once, keeping its
@@ -223,7 +225,7 @@ Trust-minimised peg-out is out of scope for 0.0.1.
 ## 8. Rules as documents
 
 The chain's rules are engine overlay documents: JSON-LD, one per change, each with an
-activation height, published as addressable Nostr events (kind 33500, `d` = chain id :
+activation height, published as addressable Nostr events (kind 33500, `d` = chain alias :
 activation height) signed by a rule key. A node is configured with the rule keys it follows.
 It applies a rule from its activation height because its operator chose that key, and it
 shows the rule text before applying anything from a key it has not seen.
@@ -250,7 +252,7 @@ peg wallet. Proposal: [proposals/level-2.md](proposals/level-2.md).
 
 ## 10. The first chain: the txbt4 siding
 
-- chain id: `sidestr:txbt4-siding`, parent `btc:testnet4-blake2b` (the long spelling; `txbt4` since 0.0.2)
+- chain alias: `sidestr:txbt4-siding` (its hash follows once the signer publishes the chain event, 0.0.5), parent `btc:testnet4-blake2b` (the long spelling; `txbt4` since 0.0.2)
 - genesis pegs: four outputs of 25 tBTC on the parent, made on 15 September 2026 at heights
   151,152 to 151,154, 100 tBTC in total, each with a 10,000-block refund path
 - challenge: one key, on one machine, which is also the peg holder. A test, not a federation.
@@ -270,8 +272,8 @@ producer takes a base interval and a shorter one for when its mempool is not emp
 
 Blocks are served as the block file blaketestnode already syncs from, `[u32 height][u32
 size][block]` with a JSON index, from any mirror. Tips are published as signed events in the
-NIP-333 shape with `d` = chain id, so a node cross-checks a mirror against the signers'
-own announcement: kind 33333, tags `d` and `n` = chain id, `t` = `sidestr` (so a directory can
+NIP-333 shape with `d` = chain alias and `e` = the chain event (section 3), so a node cross-checks a mirror against the signers'
+own announcement: kind 33333, tags `d` and `n` = chain alias, `e` = the chain event's id, `t` = `sidestr` (so a directory can
 ask a relay for every sidestr chain at once), `tip` = height, `u` = a mirror's base URL (one tag
 per mirror), `peg` = the parent output script a peg-in pays (section 6; optional, the newest
 announcement's wins), content = the last twelve headers as hex, signed by the signer's key.
@@ -289,7 +291,7 @@ the header at its tip must be the announced one, and it may be behind but never 
 signer. A chain made before 0.0.5 is resolved as before (`chain.json` from a mirror, accepted
 when its `signer` field is the announcement's author) until its signer publishes the document
 as an event and adds the `e` tag; its alias does not change. Transactions reach a producer by `POST /tx` or as kind 23500 events on a
-relay, content the transaction hex, tagged `chain` = chain id; relays index only single-letter
+relay, content the transaction hex, tagged `chain` = chain alias; relays index only single-letter
 tags, so a producer subscribes by kind and checks the tag on receipt. The event's key is
 anyone's: the transaction authorises itself. A producer includes what validates. A transaction
 it admitted but a block rule refuses is dropped, with the rules it broke, and the same bytes
