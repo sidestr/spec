@@ -34,13 +34,16 @@ export function parseChainEvent(ev, { verify }) {
 // one event by id, from any of the relays, within `timeout` ms; null if none answers
 export function fetchEvent({ relays, id, timeout = 6000 }) {
   return new Promise((resolve) => {
-    let found = null, open = relays.length; const done = () => { if (--open <= 0) finish(); }; const finish = () => { clearTimeout(t); resolve(found); };
+    let found = null, open = relays.length, finished = false; const sockets = [];
+    const done = () => { if (--open <= 0) finish(); };
+    // the first answer ends the search: every socket is closed, the others' EOSE no longer awaited
+    const finish = () => { if (finished) return; finished = true; clearTimeout(t); for (const w of sockets) { try { w.close(); } catch {} } resolve(found); };
     const t = setTimeout(finish, timeout); if (!relays.length) return finish();
     for (const url of relays) {
-      let ws; try { ws = new WebSocket(url); } catch { done(); continue; }
+      let ws; try { ws = new WebSocket(url); } catch { done(); continue; } sockets.push(ws);
       ws.onopen = () => ws.send(JSON.stringify(['REQ', 'ev', { ids: [id], limit: 1 }]));
       ws.onmessage = (m) => { let msg; try { msg = JSON.parse(typeof m.data === 'string' ? m.data : String(m.data)); } catch { return; }
-        if (msg[0] === 'EVENT' && msg[2]?.id === id) { found = found ?? msg[2]; try { ws.close(); } catch {} finish(); }
+        if (msg[0] === 'EVENT' && msg[2]?.id === id) { found = found ?? msg[2]; finish(); }
         if (msg[0] === 'EOSE' || msg[0] === 'CLOSED') { try { ws.close(); } catch {} done(); } };
       ws.onerror = () => {}; ws.onclose = () => done();
     }
