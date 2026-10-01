@@ -1,0 +1,71 @@
+{
+  "description": "keys.mjs known answers: a did:nostr identifier read as the 02 point, the secret normalised once, then plain additive tweaks (+1, +2, a tagged scalar) with every intermediate point kept whole; outputs are the x-only forms; signingKeys the key a BIP 340 signature of each output needs",
+  "cases": {
+    "evenSecret": {
+      "secret": "1111111111111111111111111111111111111111111111111111111111111111",
+      "point": "034f355bdcb7cc0af728ef3cceb9615d90684bb5b2ca5f859ab0f0b704075871aa",
+      "did": "did:nostr:4f355bdcb7cc0af728ef3cceb9615d90684bb5b2ca5f859ab0f0b704075871aa",
+      "multikey": "fe701034f355bdcb7cc0af728ef3cceb9615d90684bb5b2ca5f859ab0f0b704075871aa",
+      "normalized": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeda99dcbd59e378f2aaec14d7bbf253030",
+      "normalizedPoint": "024f355bdcb7cc0af728ef3cceb9615d90684bb5b2ca5f859ab0f0b704075871aa",
+      "tweaks": [
+        "0000000000000000000000000000000000000000000000000000000000000001",
+        "0000000000000000000000000000000000000000000000000000000000000002",
+        "78543a3cfd2fb5cd8b438a76ee9d90bd05ec48fd5bd6166944673097f9c1e4da"
+      ],
+      "chainFromSecret": [
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeda99dcbd59e378f2aaec14d7bbf253031",
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeda99dcbd59e378f2aaec14d7bbf253033",
+        "6743292bec1ea4bc7a327965dd8c7fabf4db37ec4ac5055833561f86e8b0d3cc"
+      ],
+      "chainPoints": [
+        "02267a18ff220725b38f60214e9a47e402dae3440fcfc240f3e4679344f1fc000c",
+        "03bfd366fbb7af18e584c55b18691e045efece6a149ab7d9aeac4bd9ed03e6a369",
+        "027b26239bcfc4f2a15d919bc043060be81b1932a787112d72e524a48977e2c083"
+      ],
+      "outputs": [
+        "267a18ff220725b38f60214e9a47e402dae3440fcfc240f3e4679344f1fc000c",
+        "bfd366fbb7af18e584c55b18691e045efece6a149ab7d9aeac4bd9ed03e6a369",
+        "7b26239bcfc4f2a15d919bc043060be81b1932a787112d72e524a48977e2c083"
+      ],
+      "signingKeys": [
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeda99dcbd59e378f2aaec14d7bbf253031",
+        "111111111111111111111111111111111111111111111111111111111111110e",
+        "6743292bec1ea4bc7a327965dd8c7fabf4db37ec4ac5055833561f86e8b0d3cc"
+      ]
+    },
+    "oddSecret": {
+      "secret": "0000000000000000000000000000000000000000000000000000000000000006",
+      "point": "03fff97bd5755eeea420453a14355235d382f6472f8568a18b2f057a1460297556",
+      "did": "did:nostr:fff97bd5755eeea420453a14355235d382f6472f8568a18b2f057a1460297556",
+      "multikey": "fe70103fff97bd5755eeea420453a14355235d382f6472f8568a18b2f057a1460297556",
+      "normalized": "fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413b",
+      "normalizedPoint": "02fff97bd5755eeea420453a14355235d382f6472f8568a18b2f057a1460297556",
+      "tweaks": [
+        "0000000000000000000000000000000000000000000000000000000000000001",
+        "0000000000000000000000000000000000000000000000000000000000000002",
+        "78543a3cfd2fb5cd8b438a76ee9d90bd05ec48fd5bd6166944673097f9c1e4da"
+      ],
+      "chainFromSecret": [
+        "fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413c",
+        "fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413e",
+        "78543a3cfd2fb5cd8b438a76ee9d90bd05ec48fd5bd6166944673097f9c1e4d7"
+      ],
+      "chainPoints": [
+        "032f8bde4d1a07209355b4a7250a5c5128e88b84bddc619ab7cba8d569b240efe4",
+        "03f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9",
+        "02e3bc966153b99097420f83c8e8839033ed2888d0871037375f4f2e9360672bbb"
+      ],
+      "outputs": [
+        "2f8bde4d1a07209355b4a7250a5c5128e88b84bddc619ab7cba8d569b240efe4",
+        "f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9",
+        "e3bc966153b99097420f83c8e8839033ed2888d0871037375f4f2e9360672bbb"
+      ],
+      "signingKeys": [
+        "0000000000000000000000000000000000000000000000000000000000000005",
+        "0000000000000000000000000000000000000000000000000000000000000003",
+        "78543a3cfd2fb5cd8b438a76ee9d90bd05ec48fd5bd6166944673097f9c1e4d7"
+      ]
+    }
+  }
+}
