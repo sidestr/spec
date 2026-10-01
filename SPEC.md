@@ -1,6 +1,6 @@
 # sidestr — user activated sidechains
 
-Version: 0.0.4, draft, 24 September 2026 (0.0.3: 23 September; 0.0.2: 21 September; 0.0.1: 15 September). Written the day the first pegs were made, before
+Version: 0.0.5, draft, 1 October 2026 (0.0.4: 24 September; 0.0.3: 23 September; 0.0.2: 21 September; 0.0.1: 15 September). Written the day the first pegs were made, before
 the first sidechain block. Nothing here is final. Field names, kinds and document shapes are
 provisional, and the numbers in section 10 describe one test chain.
 
@@ -59,6 +59,16 @@ chain's network:
 | `pegConfirmations` | parent confirmations before a peg-in may be claimed |
 | `refundBlocks` | the relative timelock on every peg output's refund path |
 | `genesis` | the genesis document (section 5) |
+| `name` | a short alias for people and tags, `sidestr:<name>` (section 11); not an identity |
+
+The chain document is a Nostr event of kind 3500 (Appendix A), a regular kind: signed by the
+chain's key, and immutable, since a chain must not change under its users (changes are rule
+documents with activation heights, section 8). Its **event id is the chain's hash**, the one
+value that names this chain and no other: it is what the tip announcement points at, what a
+client verifies the document against, and what anything that must commit to a chain uses (a
+peg-in tweak, issue #23; a nested chain's `parent`). The event's pubkey is the signer; the
+document carries no `signer` field. A chain is final once its document is signed: re-signing
+gives a new id, which is a new chain.
 
 Everything the overlay does not set is inherited from the parent: header format and
 proof-of-work hash, script rules, weight limits, the unified sighash where the parent has it.
@@ -150,8 +160,11 @@ exactly those amounts:
 ```
 
 Each peg's `script` is where its coins appear on the sidechain. The genesis block's coinbase
-pays those scripts those amounts and nothing else, and its `prev` is all zeros. The document
-is signed by the chain's spec key and is the first rule document (section 8).
+pays those scripts those amounts and nothing else, and its `prev` is all zeros. The genesis
+document is the first rule document (section 8) and travels inside the chain event (section 3,
+the `genesis` field), so one signature and one id cover both; `genesisHash` in the document is
+a cross-check, never the identity. Chains made before 0.0.5 published it as kind 33501, which
+a client still reads for them.
 
 ## 6. Peg-in
 
@@ -262,12 +275,20 @@ own announcement: kind 33333, tags `d` and `n` = chain id, `t` = `sidestr` (so a
 ask a relay for every sidestr chain at once), `tip` = height, `u` = a mirror's base URL (one tag
 per mirror), `peg` = the parent output script a peg-in pays (section 6; optional, the newest
 announcement's wins), content = the last twelve headers as hex, signed by the signer's key.
-A client that knows only the chain id takes the newest announcement, reads `chain.json` from a
-mirror it names, and accepts that mirror when the document's `signer` is the announcement's
-author; a client that already knows the signer takes no other's. A mirror is then held to the
-announcement: the header at its tip must be the announced one, and it may be behind but never
-ahead of the signer. A chain id is a name, not a proof, so a client shows the signer it settled
-on. Transactions reach a producer by `POST /tx` or as kind 23500 events on a
+A chain has two names with two roles. The **hash** is its chain event's id (section 3), the
+identity for anything cryptographic: the tip announcement carries it as an `e` tag, a client
+verifies the document against it, a tweak commits to it. The **alias** `sidestr:<name>` is for
+people, tags and `OP_RETURN`s, and is the `d` of the tip announcement. A client that knows only
+the alias takes the newest announcement, reads the chain event by its `e` tag from a relay (or
+from a mirror, which may serve the event's JSON), and accepts it when the event's id is the
+hash of its content and its signature is the announcement's author's; a client that already
+knows the hash takes no other document. The alias is still a name, not a proof: two signers
+can both announce `sidestr:poker`, so a client shows the hash and the signer it settled on, and
+anything that must bind to a chain binds to the hash. A mirror is then held to the announcement:
+the header at its tip must be the announced one, and it may be behind but never ahead of the
+signer. A chain made before 0.0.5 is resolved as before (`chain.json` from a mirror, accepted
+when its `signer` field is the announcement's author) until its signer publishes the document
+as an event and adds the `e` tag; its alias does not change. Transactions reach a producer by `POST /tx` or as kind 23500 events on a
 relay, content the transaction hex, tagged `chain` = chain id; relays index only single-letter
 tags, so a producer subscribes by kind and checks the tag on receipt. The event's key is
 anyone's: the transaction authorises itself. A producer includes what validates. A transaction
@@ -334,6 +355,13 @@ status. The core above changes only when a proposal has run unchanged for a whil
 
 ## 16. Changelog
 
+- 2026-10-01 — 0.0.5: the chain document is a Nostr event (kind 3500, regular, immutable) and
+  its event id is the chain's hash: the tip names it (`e`), a client verifies the document
+  against it, and anything that must commit to a chain commits to it (3, 11, Appendix A). The
+  alias `sidestr:<name>` stays for people and tags. The genesis travels inside the chain event
+  (5); the `signer` field goes, the event's pubkey being the signer. Chains made before 0.0.5
+  are read as before until their signer publishes the event
+  ([issue #24](https://github.com/sidestr/spec/issues/24)).
 - 2026-09-24 — 0.0.4 (later the same day): kind 23503 carries a signed parent transaction to a
   producer with a node, which broadcasts it only if its node's own policy accepts it (11).
 - 2026-09-24 — 0.0.4: the signer announces the peg script with every tip (`peg` tag, 11) and
@@ -366,9 +394,10 @@ status. The core above changes only when a proposal has run unchanged for a whil
 | 23512 | peg-out PSBT to co-sign (9.1) | ephemeral |
 | 23513 | co-signed peg-out PSBT, `e` = 23512 (9.1) | ephemeral |
 | 23514 | sealed block, content the block hex (9.1) | ephemeral |
-| 33333 | tip, NIP-333 shape, `d` = chain id | addressable |
-| 33500 | rule document, `d` = chain id : activation height | addressable |
-| 33501 | genesis document, `d` = chain id | addressable |
+| 3500 | chain document (section 3), content the document; its id is the chain's hash | regular (immutable) |
+| 33333 | tip, NIP-333 shape, `d` = chain alias, `e` = the chain event | addressable |
+| 33500 | rule document, `d` = chain alias : activation height | addressable |
+| 33501 | genesis document, `d` = chain alias; chains made before 0.0.5 (section 5) | addressable |
 | 33502 | peg record, `d` = parent txid : vout | addressable |
 
 ## Appendix B. Prior art
