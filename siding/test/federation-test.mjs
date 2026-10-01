@@ -14,6 +14,7 @@ const e0 = await loadEngine(base); const signer = makeSigner(e0);
 const keys = [signer.randomKey(), signer.randomKey(), signer.randomKey()]; const pubs = keys.map((k) => signer.pubkeyOf(k));
 const doc = { ...base, id: 'sidestr:fedtest', name: 'fedtest', signers: pubs, threshold: 2, pegs: [{ txid: 'a'.repeat(64), vout: 0, amount: 5e9, script: '5120' + pubs[0] }] }; delete doc.genesisHash; delete doc.challenge; delete doc.signer;
 const fed = federation(e0, doc); doc.challenge = fed.challenge;
+await throws('a document that lists one key twice is refused: multi_a counts slots, so [A, A, B] with k = 2 would be sealed by A alone', async () => federation(e0, { ...doc, signers: [pubs[0], pubs[0], pubs[1]] }), /distinct/);
 t('the challenge is a taproot output derived from the signers (NUMS internal key, one multi_a leaf)', /^5120[0-9a-f]{64}$/.test(fed.challenge) && fed.script === leafScript(pubs, 2) && fed.controlBlock.length === 66);
 let refused = null; try { await loadEngine({ ...doc, challenge: '5120' + '11'.repeat(32) }); } catch (x) { refused = x.message; }
 t('a document whose challenge is not the derived one is refused by the engine', /is not the one 3 signers/.test(refused ?? ''));

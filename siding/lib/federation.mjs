@@ -19,6 +19,9 @@ export function numsKey({ hash, secp }, chainId) {
 export function leafScript(signers, threshold) {
   if (!Array.isArray(signers) || signers.length < 1 || signers.length > 16) throw new Error('1 to 16 signers'); if (!(threshold >= 1 && threshold <= signers.length)) throw new Error('threshold between 1 and the number of signers');
   for (const s of signers) if (!/^[0-9a-f]{64}$/.test(s)) throw new Error(`signer ${s} is not an x-only key`);
+  // a key listed twice fills two slots with one signature: multi_a counts slots, not keys, so a
+  // 2-of-3 whose signers are [A, A, B] is sealed by A alone. Signers are distinct keys.
+  if (new Set(signers).size !== signers.length) throw new Error('signers must be distinct keys');
   return signers.map((pk, i) => '20' + pk + (i === 0 ? 'ac' : 'ba')).join('') + (0x50 + threshold).toString(16) + '9c';
 }
 export function leafHashOf({ hash }, script) { const s = unhex(script); return hash.taggedHash('TapLeaf', Uint8Array.of(0xc0), Uint8Array.from(compact(s.length)), s); }
