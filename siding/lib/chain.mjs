@@ -11,8 +11,9 @@ const NULL32 = '00'.repeat(32);
 const keyOf = (p) => `${p.txid}:${p.vout}`;
 
 export class Siding {
-  constructor({ engine, chain, dir, signer, log = () => {} }) {
-    Object.assign(this, { engine, chain, dir, signer, log });
+  constructor({ engine, chain, dir, signer, log = () => {}, onPersistenceError = () => {} }) {
+    Object.assign(this, { engine, chain, dir, signer, log, onPersistenceError });
+    this.persistenceError = null;
     const { k } = engine; this.k = k;
     this.utxo = new Map(); this.node = new ChainNode({ k, utxo: this.utxo, epochStart: 0, log });
     this.mempool = new Map(); this.mempoolSpent = new Set(); this.rejected = new Map(); // txid -> { why, hex }: what a block rule refused this session, by its exact bytes (a re-signed fix shares the txid and is judged afresh)
@@ -32,13 +33,14 @@ export class Siding {
   // replay the block file, creating it with the genesis when absent: with one signer from its key,
   // with a federation through `seal(block)`, which the caller makes from k signatures
   async open(privHex, { seal = null } = {}) {
+    this.#assertHealthy();
     let index = readIndex(this.idx);
     if (!index) {
       if (!privHex && !seal) throw new Error('no chain on disk and no key to make the genesis');
       if (this.federation && !seal) throw new Error('a federated chain\'s genesis needs k signatures: open(null, { seal })');
       const g = seal ? seal(this.buildGenesis()) : this.genesisBlock(privHex); const hex = this.k.codec.encodeHex('Block', g); const hash = this.k.codec.blockHash(g.header);
       index = { network: this.chain.id, from: 0, to: -1, blocks: [] };
-      appendBlock(this.dat, index, 0, hash, Buffer.from(hex, 'hex')); writeIndex(this.idx, index);
+      this.#persist(index, 0, hash, Buffer.from(hex, 'hex'));
       this.log(`genesis ${hash} written: ${g.transactions[0].outputs.length - 1} pegs, ${this.chain.pegs.reduce((s, p) => s + p.amount, 0)} sats`);
     }
     for (const e of index.blocks) await this.#applyAsync(e.height, readBlock(this.dat, e).toString('hex'), e.hash);
@@ -64,17 +66,33 @@ export class Siding {
     return r;
   }
   #stillValid(tx) { return tx.inputs.every((i) => this.utxo.has(keyOf(i.prevout))); }
-  tip() { const h = this.node.height; return { height: h, hash: this.node.chain[h], time: this.node.headers[h].time }; }
-  height() { return this.node.height; }
+  #assertHealthy() { if (this.persistenceError) throw this.persistenceError; }
+  // Applying a block changes the UTXO set, rule state and mempool before it is
+  // written. An I/O failure is not a rejected transaction: continuing would
+  // extend a tip that cannot be replayed. Latch it until a fresh instance opens
+  // verified disk state; do not attempt an incomplete in-memory rollback.
+  #persist(index, height, hash, bytes) {
+    this.#assertHealthy();
+    try { appendBlock(this.dat, index, height, hash, bytes); writeIndex(this.idx, index); }
+    catch (cause) {
+      this.persistenceError = Object.assign(new Error(`block ${height} persistence failed; chain halted: ${cause.message}`, { cause }), { code: 'SIDING_PERSISTENCE_FAILED' });
+      this.onPersistenceError(this.persistenceError);
+      throw this.persistenceError;
+    }
+  }
+  tip() { this.#assertHealthy(); const h = this.node.height; return { height: h, hash: this.node.chain[h], time: this.node.headers[h].time }; }
+  height() { this.#assertHealthy(); return this.node.height; }
   // accept a block from elsewhere (a mirror): validated by the node, then written
   async addBlock(hex, expectHash = null) {
+    this.#assertHealthy();
     const block = this.k.codec.decode('Block', hex); const h = blockHeight(block);
     const r = await this.#applyAsync(h, hex, expectHash);
-    appendBlock(this.dat, this.index, h, r.hash, Buffer.from(hex, 'hex')); writeIndex(this.idx, this.index);
+    this.#persist(this.index, h, r.hash, Buffer.from(hex, 'hex'));
     return { height: h, hash: r.hash, txs: block.transactions.length };
   }
   // SPEC 11: a transaction reaches the producer; it is included when it validates
   async submit(hex) {
+    this.#assertHealthy();
     const { k } = this; const tx = k.codec.decode('Transaction', hex); const txid = k.codec.txid(tx);
     if (this.mempool.has(txid)) return { txid, dup: true };
     const rj = this.rejected.get(txid); if (rj && rj.hex === hex.toLowerCase()) throw new Error(`rejected this session: ${rj.why}`);
@@ -126,12 +144,12 @@ export class Siding {
   }
   pegoutMin() { return Number(this.chain.pegoutMin ?? 10000); }
   // every burn the chain has validated, oldest first (SPEC 7)
-  pegouts() { return [...(this.engine.sidestr?.pegouts.values() ?? [])].sort((a, b) => a.height - b.height); }
+  pegouts() { this.#assertHealthy(); return [...(this.engine.sidestr?.pegouts.values() ?? [])].sort((a, b) => a.height - b.height); }
   minFeeRate() { return Number(this.chain.minFeeRate ?? 1); }
   fees(tx) { return tx.inputs.reduce((s, i) => s + this.utxo.get(keyOf(i.prevout)).output.value, 0) - tx.outputs.reduce((s, o) => s + o.value, 0); }
   // SPEC 4: a block on the tip with everything in the mempool, fees to the signer, signed
   // SPEC 6: a claim pays the peg's amount to the script the peg-in named, followed by its marker
-  claimed(txid, vout) { return this.engine.sidestr?.claims.has(outpointOf(txid, vout)) ?? false; }
+  claimed(txid, vout) { this.#assertHealthy(); return this.engine.sidestr?.claims.has(outpointOf(txid, vout)) ?? false; }
   claimedTx(txid) { for (const k of this.engine.sidestr?.claims.keys() ?? []) if (k.startsWith(txid + ':')) return true; return false; }
   // the next block, unsigned: the mempool in order, fees to the challenge, the claims (SPEC 4, 6)
   async buildNext({ time = Math.floor(Date.now() / 1000), claims = [], txs: only = null } = {}) {
@@ -145,11 +163,14 @@ export class Siding {
   }
   // one signer: build, sign, add
   async produce(privHex, opts = {}) {
+    this.#assertHealthy();
     if (this.federation) throw new Error('a federated chain makes blocks through the round (proposals/level-2.md), not produce()');
     const sign = (block) => this.k.codec.encodeHex('Block', signBlock({ ...this.engine, interpreter: this.k.interpreter, schnorrSign: this.signer.schnorrSign }, block, this.chain.challenge, privHex));
     let built = await this.buildNext(opts), evicted = [];
     try { const r = await this.addBlock(sign(built.block)); return { ...r, fees: built.fees, claims: built.claims, evicted }; }
     catch (e) {
+      // Never turn a storage failure into mempool eviction and another block.
+      this.#assertHealthy();
       // a transaction admission accepted but a block rule refuses would otherwise be retried every tick until
       // restart (spec issue 13): find the ones a block cannot carry, drop them, remember them, and build once more
       if (!this.mempool.size) throw e;
@@ -183,5 +204,5 @@ export class Siding {
   }
   // a sealed block (any path) added
   addSealed(block) { return this.addBlock(this.k.codec.encodeHex('Block', block)); }
-  coins(scriptPubKey) { const out = []; for (const [key, c] of this.utxo) if (c.output.scriptPubKey === scriptPubKey) out.push({ outpoint: key, value: c.output.value, height: c.height, coinbase: c.coinbase }); return out; }
+  coins(scriptPubKey) { this.#assertHealthy(); const out = []; for (const [key, c] of this.utxo) if (c.output.scriptPubKey === scriptPubKey) out.push({ outpoint: key, value: c.output.value, height: c.height, coinbase: c.coinbase }); return out; }
 }

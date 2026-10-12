@@ -125,3 +125,26 @@ peg-ins, peg-outs), `/chain.json`, `/tip`, `/blocks.json`, `/blocks.dat` (Range 
 
 Small known gaps: the explorer shows amounts in coins, not sats; a burn's parent txid is in the
 producer's `pegouts.json` but not on the mirror, so the explorer cannot yet link it.
+
+## Block persistence failures
+
+If appending a block or writing its index fails (for example, `ENOSPC`), the
+producer exits nonzero. The in-memory chain has already applied that block, so
+continuing after the error could create successors of a block absent from disk.
+`Siding` latches `SIDING_PERSISTENCE_FAILED`, refuses further production, block
+admission and transaction submission, and refuses tip, height, coin, claim and peg-out queries. Its
+optional synchronous `onPersistenceError(error)` hook lets an embedding service
+stop its other work; the producer CLI uses it to terminate every production path.
+Create a fresh instance only after checking the saved history.
+
+This stops cascading gaps; it does not make the two-file block store crash-atomic
+or repair a partial append or damaged index. Preserve both files, check that the
+index is contiguous and its blocks replay, and recover from a verified copy
+before restarting. Do not silently truncate or reissue a chain with live funds.
+
+The fault-injection regression suite needs the same `SCHEMA` and `BLAKETESTNODE`
+checkouts as the producer and runs without a parent node or relay:
+
+```sh
+node --test test/persistence-test.mjs
+```

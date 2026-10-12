@@ -145,7 +145,10 @@ if (cmd === 'produce') {
   const key = await loadKey(keyPath, { signer }); const pub = signer.pubkeyOf(key);
   const fed = engine.sidestr.federation;
   if (fed ? !fed.signers.includes(pub) : chain.challenge !== '5120' + pub) throw new Error(`the key at ${keyPath} is not ${fed ? 'one of the chain\'s signers' : 'the chain\'s signer'}`);
-  const s = await new Siding({ engine: { ...engine, signer }, chain, dir, signer, log }).open(fed ? null : key);
+  // All production paths (timer, peg-in scan and federation) share this hook.
+  // Exit before advertising or extending an in-memory tip that was not saved.
+  const onPersistenceError = (error) => { console.error(error.message); process.exit(1); };
+  const s = await new Siding({ engine: { ...engine, signer }, chain, dir, signer, log, onPersistenceError }).open(fed ? null : key);
   const relays = String(args.relay ?? '').split(',').map((x) => x.trim()).filter(Boolean);
   // SPEC 11: announce the tip on the relays after every block, naming the mirrors
   const mirrors = String(args['announce-mirror'] ?? '').split(',').map((x) => x.trim().replace(/\/+$/, '')).filter(Boolean); let announced = -1;
