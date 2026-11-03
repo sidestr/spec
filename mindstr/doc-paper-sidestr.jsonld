@@ -21,16 +21,16 @@
     {
       "@id": "#ujs2ci",
       "name": "sections 1/2",
-      "x": 275,
-      "y": 41,
+      "x": 276,
+      "y": 38,
       "bgColor": "#acd5ff",
       "parent": "#this"
     },
     {
       "@id": "#442pm7",
       "name": "Introduction",
-      "x": 391,
-      "y": -265,
+      "x": 336,
+      "y": -228,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/paper/sidestr.md#1-introduction",
       "bgColor": "#daeeff",
       "parent": "#ujs2ci"
@@ -38,8 +38,8 @@
     {
       "@id": "#imr4n9",
       "name": "Chains",
-      "x": 559,
-      "y": -161,
+      "x": 474,
+      "y": -136,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/paper/sidestr.md#2-chains",
       "bgColor": "#daeeff",
       "parent": "#ujs2ci"
@@ -47,8 +47,8 @@
     {
       "@id": "#tpktj6",
       "name": "Blocks",
-      "x": 500,
-      "y": 9,
+      "x": 430,
+      "y": 8,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/paper/sidestr.md#3-blocks",
       "bgColor": "#daeeff",
       "parent": "#ujs2ci"
@@ -56,8 +56,8 @@
     {
       "@id": "#u94rpy",
       "name": "Pegs",
-      "x": 550,
-      "y": 181,
+      "x": 466,
+      "y": 154,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/paper/sidestr.md#4-pegs",
       "bgColor": "#daeeff",
       "parent": "#ujs2ci"
@@ -65,8 +65,8 @@
     {
       "@id": "#7txfyn",
       "name": "Rules",
-      "x": 377,
-      "y": 279,
+      "x": 324,
+      "y": 240,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/paper/sidestr.md#5-rules",
       "bgColor": "#daeeff",
       "parent": "#ujs2ci"
@@ -74,8 +74,8 @@
     {
       "@id": "#v5njcx",
       "name": "Validation",
-      "x": 286,
-      "y": 439,
+      "x": 242,
+      "y": 372,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/paper/sidestr.md#6-validation",
       "bgColor": "#daeeff",
       "parent": "#ujs2ci"
@@ -83,16 +83,16 @@
     {
       "@id": "#z8kicz",
       "name": "sections 2/2",
-      "x": -228,
-      "y": 88,
+      "x": -209,
+      "y": 81,
       "bgColor": "#febdc6",
       "parent": "#this"
     },
     {
       "@id": "#7348h9",
       "name": "Trust",
-      "x": -124,
-      "y": 412,
+      "x": -107,
+      "y": 354,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/paper/sidestr.md#7-trust",
       "bgColor": "#ffe2e6",
       "parent": "#z8kicz"
@@ -100,8 +100,8 @@
     {
       "@id": "#jtny2v",
       "name": "Reducing the trust",
-      "x": -337,
-      "y": 411,
+      "x": -286,
+      "y": 349,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/paper/sidestr.md#8-reducing-the-trust",
       "bgColor": "#ffe2e6",
       "parent": "#z8kicz"
@@ -109,8 +109,8 @@
     {
       "@id": "#zvvi4r",
       "name": "What runs",
-      "x": -411,
-      "y": 242,
+      "x": -354,
+      "y": 208,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/paper/sidestr.md#9-what-runs",
       "bgColor": "#ffe2e6",
       "parent": "#z8kicz"
@@ -118,8 +118,8 @@
     {
       "@id": "#ezqtt6",
       "name": "Related work",
-      "x": -572,
-      "y": 123,
+      "x": -485,
+      "y": 104,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/paper/sidestr.md#10-related-work",
       "bgColor": "#ffe2e6",
       "parent": "#z8kicz"
@@ -127,8 +127,8 @@
     {
       "@id": "#8edjsn",
       "name": "Conclusion",
-      "x": -497,
-      "y": -47,
+      "x": -427,
+      "y": -40,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/paper/sidestr.md#11-conclusion",
       "bgColor": "#ffe2e6",
       "parent": "#z8kicz"
@@ -136,8 +136,8 @@
     {
       "@id": "#75s7ir",
       "name": "References",
-      "x": -526,
-      "y": -226,
+      "x": -446,
+      "y": -192,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/paper/sidestr.md#references",
       "bgColor": "#ffe2e6",
       "parent": "#z8kicz"
@@ -145,8 +145,8 @@
     {
       "@id": "#7x3k79",
       "name": "← paper",
-      "x": -24,
-      "y": -211,
+      "x": -22,
+      "y": -195,
       "link": "./docs-paper.jsonld",
       "bgColor": "#ececec",
       "parent": "#this"

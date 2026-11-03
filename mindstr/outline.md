@@ -1,7 +1,9 @@
 # [spec](https://github.com/sidestr/spec)
 
-- [README](https://github.com/sidestr/spec/blob/gh-pages/README.md#sidestr)
-  - [siding/](https://github.com/sidestr/spec/blob/gh-pages/README.md#siding)
+- [Live site](https://sidestr.com/spec/)
+  - [User activated sidechains: Bitcoin's rules beside a…](https://sidestr.com/spec/)
+  - [sidestr.com/spec](https://sidestr.com/spec/)
+  - [since Sep 2026 · last 12 Oct 2026](https://github.com/sidestr/spec/commits/gh-pages)
 - [SPEC.md · 22 ›](./doc-spec.jsonld)
   - sections 1/3
     - [Principles](https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#1-principles)
@@ -86,6 +88,8 @@
         - [6.2 Several outcomes](https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#62-several-outcomes-draft-not-built)
         - [Threats](https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#7-threats)
         - [Acceptance](https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#8-acceptance)
+- [README](https://github.com/sidestr/spec/blob/gh-pages/README.md#sidestr)
+  - [siding/](https://github.com/sidestr/spec/blob/gh-pages/README.md#siding)
 - [Open PRs · 1](https://github.com/sidestr/spec/pulls)
   - [#8 federation: signers are distinct ke…](https://github.com/sidestr/spec/pull/8)
 - [Open issues · 12 ›](./issues.jsonld)
@@ -103,6 +107,3 @@
     - [#3 checkTx discards the execution stat…](https://github.com/sidestr/spec/issues/3)
     - [#2 Refactor notes from packaging (side…](https://github.com/sidestr/spec/issues/2)
     - [#1 RGB, client-side validated assets o…](https://github.com/sidestr/spec/issues/1)
-- [sidestr: user activated sidechains. The spec.](https://github.com/sidestr/spec)
-  - [since Sep 2026 · last 12 Oct 2026](https://github.com/sidestr/spec/commits/gh-pages)
-  - [sidestr.com/spec](https://sidestr.com/spec/)

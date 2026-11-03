@@ -21,16 +21,16 @@
     {
       "@id": "#7fnz2s",
       "name": "issues 1/2",
-      "x": 233,
-      "y": 77,
+      "x": 208,
+      "y": 70,
       "bgColor": "#acd5ff",
       "parent": "#this"
     },
     {
       "@id": "#p89exh",
       "name": "#33 siding loads blaketestnode from an…",
-      "x": 405,
-      "y": -249,
+      "x": 349,
+      "y": -214,
       "link": "https://github.com/sidestr/spec/issues/33",
       "bgColor": "#daeeff",
       "parent": "#7fnz2s"
@@ -38,8 +38,8 @@
     {
       "@id": "#urtpxv",
       "name": "#26 Prediction markets: a markets rule…",
-      "x": 574,
-      "y": -117,
+      "x": 486,
+      "y": -99,
       "link": "https://github.com/sidestr/spec/issues/26",
       "bgColor": "#daeeff",
       "parent": "#7fnz2s"
@@ -47,8 +47,8 @@
     {
       "@id": "#4dg5c4",
       "name": "#25 Ordering is a rule: name the challe…",
-      "x": 494,
-      "y": 68,
+      "x": 437,
+      "y": 58,
       "link": "https://github.com/sidestr/spec/issues/25",
       "bgColor": "#daeeff",
       "parent": "#7fnz2s"
@@ -56,8 +56,8 @@
     {
       "@id": "#kwm3he",
       "name": "#23 Peg-in by taproot commitment (tweak…",
-      "x": 500,
-      "y": 266,
+      "x": 424,
+      "y": 226,
       "link": "https://github.com/sidestr/spec/issues/23",
       "bgColor": "#daeeff",
       "parent": "#7fnz2s"
@@ -65,8 +65,8 @@
     {
       "@id": "#qvd9cw",
       "name": "#22 evmrpc: an eth_call that throws ins…",
-      "x": 287,
-      "y": 348,
+      "x": 247,
+      "y": 299,
       "link": "https://github.com/sidestr/spec/issues/22",
       "bgColor": "#daeeff",
       "parent": "#7fnz2s"
@@ -74,8 +74,8 @@
     {
       "@id": "#sf37xb",
       "name": "#21 evm: a transaction dropped at seque…",
-      "x": 124,
-      "y": 490,
+      "x": 105,
+      "y": 415,
       "link": "https://github.com/sidestr/spec/issues/21",
       "bgColor": "#daeeff",
       "parent": "#7fnz2s"
@@ -83,16 +83,16 @@
     {
       "@id": "#fuhjpf",
       "name": "issues 2/2",
-      "x": -250,
-      "y": -12,
+      "x": -230,
+      "y": -11,
       "bgColor": "#febdc6",
       "parent": "#this"
     },
     {
       "@id": "#dry8wx",
       "name": "#20 evm rule: one coinbase output satis…",
-      "x": -298,
-      "y": 341,
+      "x": -257,
+      "y": 293,
       "link": "https://github.com/sidestr/spec/issues/20",
       "bgColor": "#ffe2e6",
       "parent": "#fuhjpf"
@@ -100,8 +100,8 @@
     {
       "@id": "#rmckuv",
       "name": "#19 Future: shielded transfers as an ov…",
-      "x": -509,
-      "y": 254,
+      "x": -431,
+      "y": 215,
       "link": "https://github.com/sidestr/spec/issues/19",
       "bgColor": "#ffe2e6",
       "parent": "#fuhjpf"
@@ -109,8 +109,8 @@
     {
       "@id": "#6cicry",
       "name": "#18 Future: a chain beside more than on…",
-      "x": -496,
-      "y": 56,
+      "x": -426,
+      "y": 48,
       "link": "https://github.com/sidestr/spec/issues/18",
       "bgColor": "#ffe2e6",
       "parent": "#fuhjpf"
@@ -118,8 +118,8 @@
     {
       "@id": "#7c28q6",
       "name": "#3 checkTx discards the execution stat…",
-      "x": -570,
-      "y": -130,
+      "x": -483,
+      "y": -110,
       "link": "https://github.com/sidestr/spec/issues/3",
       "bgColor": "#ffe2e6",
       "parent": "#fuhjpf"
@@ -127,8 +127,8 @@
     {
       "@id": "#4qbh3e",
       "name": "#2 Refactor notes from packaging (side…",
-      "x": -397,
-      "y": -258,
+      "x": -341,
+      "y": -222,
       "link": "https://github.com/sidestr/spec/issues/2",
       "bgColor": "#ffe2e6",
       "parent": "#fuhjpf"
@@ -136,8 +136,8 @@
     {
       "@id": "#m3xps2",
       "name": "#1 RGB, client-side validated assets o…",
-      "x": -297,
-      "y": -434,
+      "x": -251,
+      "y": -367,
       "link": "https://github.com/sidestr/spec/issues/1",
       "bgColor": "#ffe2e6",
       "parent": "#fuhjpf"
@@ -145,8 +145,8 @@
     {
       "@id": "#yxjf84",
       "name": "← issues",
-      "x": 52,
-      "y": -208,
+      "x": 48,
+      "y": -191,
       "link": "./issues.jsonld",
       "bgColor": "#ececec",
       "parent": "#this"

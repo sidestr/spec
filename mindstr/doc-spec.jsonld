@@ -21,16 +21,16 @@
     {
       "@id": "#ab9ysn",
       "name": "sections 1/3",
-      "x": 248,
-      "y": -26,
+      "x": 228,
+      "y": -24,
       "bgColor": "#acd5ff",
       "parent": "#this"
     },
     {
       "@id": "#qhtzie",
       "name": "Principles",
-      "x": 354,
-      "y": -300,
+      "x": 305,
+      "y": -258,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#1-principles",
       "bgColor": "#daeeff",
       "parent": "#ab9ysn"
@@ -38,8 +38,8 @@
     {
       "@id": "#2sgmjt",
       "name": "Roles",
-      "x": 503,
-      "y": -262,
+      "x": 426,
+      "y": -222,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#2-roles",
       "bgColor": "#daeeff",
       "parent": "#ab9ysn"
@@ -47,8 +47,8 @@
     {
       "@id": "#j9h6ge",
       "name": "Chain",
-      "x": 486,
-      "y": -101,
+      "x": 418,
+      "y": -87,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#3-chain",
       "bgColor": "#daeeff",
       "parent": "#ab9ysn"
@@ -56,8 +56,8 @@
     {
       "@id": "#ejt2c7",
       "name": "3.1 Nesting",
-      "x": 711,
-      "y": -202,
+      "x": 598,
+      "y": -170,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#31-nesting",
       "bgColor": "#daeeff",
       "parent": "#j9h6ge"
@@ -65,8 +65,8 @@
     {
       "@id": "#tvx8v7",
       "name": "3.2 Parents",
-      "x": 829,
-      "y": -113,
+      "x": 622,
+      "y": -85,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#32-parents",
       "bgColor": "#daeeff",
       "parent": "#j9h6ge"
@@ -74,8 +74,8 @@
     {
       "@id": "#4bfmpa",
       "name": "Blocks",
-      "x": 589,
-      "y": 35,
+      "x": 499,
+      "y": 29,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#4-blocks",
       "bgColor": "#daeeff",
       "parent": "#ab9ysn"
@@ -83,8 +83,8 @@
     {
       "@id": "#c2mpq8",
       "name": "Genesis",
-      "x": 477,
-      "y": 126,
+      "x": 411,
+      "y": 109,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#5-genesis",
       "bgColor": "#daeeff",
       "parent": "#ab9ysn"
@@ -92,8 +92,8 @@
     {
       "@id": "#yykmee",
       "name": "Peg-in",
-      "x": 508,
-      "y": 255,
+      "x": 430,
+      "y": 216,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#6-peg-in",
       "bgColor": "#daeeff",
       "parent": "#ab9ysn"
@@ -101,8 +101,8 @@
     {
       "@id": "#7kgwkb",
       "name": "6.2 The desk",
-      "x": 645,
-      "y": 325,
+      "x": 542,
+      "y": 273,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#62-the-desk",
       "bgColor": "#daeeff",
       "parent": "#yykmee"
@@ -110,16 +110,16 @@
     {
       "@id": "#x7t4w7",
       "name": "sections 2/3",
-      "x": -40,
-      "y": 210,
+      "x": -37,
+      "y": 193,
       "bgColor": "#f3bee1",
       "parent": "#this"
     },
     {
       "@id": "#dsw684",
       "name": "Peg-out",
-      "x": 242,
-      "y": 372,
+      "x": 208,
+      "y": 320,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#7-peg-out",
       "bgColor": "#fce3f3",
       "parent": "#x7t4w7"
@@ -127,8 +127,8 @@
     {
       "@id": "#v88t4a",
       "name": "Rules as documents",
-      "x": 155,
-      "y": 484,
+      "x": 132,
+      "y": 410,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#8-rules-as-documents",
       "bgColor": "#fce3f3",
       "parent": "#x7t4w7"
@@ -136,8 +136,8 @@
     {
       "@id": "#skzt29",
       "name": "Levels",
-      "x": 14,
-      "y": 425,
+      "x": 12,
+      "y": 363,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#9-levels",
       "bgColor": "#fce3f3",
       "parent": "#x7t4w7"
@@ -145,8 +145,8 @@
     {
       "@id": "#t4pwzt",
       "name": "9.1 Level 2",
-      "x": 22,
-      "y": 637,
+      "x": 18,
+      "y": 535,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#91-level-2",
       "bgColor": "#fce3f3",
       "parent": "#skzt29"
@@ -154,8 +154,8 @@
     {
       "@id": "#jhaa84",
       "name": "The first chain: the txbt4 siding",
-      "x": -163,
-      "y": 482,
+      "x": -138,
+      "y": 409,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#10-the-first-chain-the-txbt4-siding",
       "bgColor": "#fce3f3",
       "parent": "#x7t4w7"
@@ -163,8 +163,8 @@
     {
       "@id": "#wavvy9",
       "name": "Distribution",
-      "x": -278,
-      "y": 353,
+      "x": -239,
+      "y": 304,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#11-distribution",
       "bgColor": "#fce3f3",
       "parent": "#x7t4w7"
@@ -172,8 +172,8 @@
     {
       "@id": "#i9w3v4",
       "name": "Assets",
-      "x": -434,
-      "y": 340,
+      "x": -368,
+      "y": 288,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#12-assets",
       "bgColor": "#fce3f3",
       "parent": "#x7t4w7"
@@ -181,16 +181,16 @@
     {
       "@id": "#e9sufn",
       "name": "sections 3/3",
-      "x": -229,
-      "y": -85,
+      "x": -211,
+      "y": -79,
       "bgColor": "#f1c99c",
       "parent": "#this"
     },
     {
       "@id": "#g45zx9",
       "name": "Acceptance test",
-      "x": -489,
-      "y": 91,
+      "x": -420,
+      "y": 78,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#13-acceptance-test",
       "bgColor": "#fbe8d3",
       "parent": "#e9sufn"
@@ -198,8 +198,8 @@
     {
       "@id": "#vz8rhu",
       "name": "Threats",
-      "x": -590,
-      "y": -12,
+      "x": -500,
+      "y": -10,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#14-threats",
       "bgColor": "#fbe8d3",
       "parent": "#e9sufn"
@@ -207,8 +207,8 @@
     {
       "@id": "#35gtrs",
       "name": "Proposals",
-      "x": -483,
-      "y": -110,
+      "x": -415,
+      "y": -95,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#15-proposals",
       "bgColor": "#fbe8d3",
       "parent": "#e9sufn"
@@ -216,8 +216,8 @@
     {
       "@id": "#fiqrfa",
       "name": "Changelog",
-      "x": -518,
-      "y": -240,
+      "x": -439,
+      "y": -204,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#16-changelog",
       "bgColor": "#fbe8d3",
       "parent": "#e9sufn"
@@ -225,8 +225,8 @@
     {
       "@id": "#fad69b",
       "name": "Appendix A. Event kinds",
-      "x": -363,
-      "y": -293,
+      "x": -312,
+      "y": -252,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#appendix-a-event-kinds",
       "bgColor": "#fbe8d3",
       "parent": "#e9sufn"
@@ -234,8 +234,8 @@
     {
       "@id": "#fnrzmm",
       "name": "Appendix B. Prior art",
-      "x": -303,
-      "y": -430,
+      "x": -257,
+      "y": -364,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/SPEC.md#appendix-b-prior-art",
       "bgColor": "#fbe8d3",
       "parent": "#e9sufn"
@@ -243,8 +243,8 @@
     {
       "@id": "#3y3s3p",
       "name": "← spec",
-      "x": 32,
-      "y": -211,
+      "x": 29,
+      "y": -194,
       "link": "./index.jsonld",
       "bgColor": "#ececec",
       "parent": "#this"

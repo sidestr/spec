@@ -21,16 +21,16 @@
     {
       "@id": "#u2s2vv",
       "name": "sections 1/2",
-      "x": 247,
-      "y": 32,
+      "x": 227,
+      "y": 29,
       "bgColor": "#acd5ff",
       "parent": "#this"
     },
     {
       "@id": "#vx2z65",
       "name": "Records",
-      "x": 397,
-      "y": -259,
+      "x": 341,
+      "y": -223,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#1-records",
       "bgColor": "#daeeff",
       "parent": "#u2s2vv"
@@ -38,8 +38,8 @@
     {
       "@id": "#xwei9g",
       "name": "The market coin",
-      "x": 571,
-      "y": -125,
+      "x": 484,
+      "y": -106,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#2-the-market-coin",
       "bgColor": "#daeeff",
       "parent": "#u2s2vv"
@@ -47,8 +47,8 @@
     {
       "@id": "#6bzs4i",
       "name": "The markets rule",
-      "x": 494,
-      "y": 63,
+      "x": 425,
+      "y": 54,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#3-the-markets-rule",
       "bgColor": "#daeeff",
       "parent": "#u2s2vv"
@@ -56,8 +56,8 @@
     {
       "@id": "#fkywkd",
       "name": "The resolver",
-      "x": 503,
-      "y": 263,
+      "x": 426,
+      "y": 222,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#4-the-resolver",
       "bgColor": "#daeeff",
       "parent": "#u2s2vv"
@@ -65,8 +65,8 @@
     {
       "@id": "#j8deiz",
       "name": "Prices",
-      "x": 290,
-      "y": 346,
+      "x": 249,
+      "y": 298,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#5-prices",
       "bgColor": "#daeeff",
       "parent": "#u2s2vv"
@@ -74,16 +74,16 @@
     {
       "@id": "#aya9s9",
       "name": "sections 2/2",
-      "x": -212,
-      "y": 112,
+      "x": -195,
+      "y": 103,
       "bgColor": "#febdc6",
       "parent": "#this"
     },
     {
       "@id": "#vn2imx",
       "name": "Activation",
-      "x": -89,
-      "y": 418,
+      "x": -76,
+      "y": 360,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#6-activation",
       "bgColor": "#ffe2e6",
       "parent": "#aya9s9"
@@ -91,8 +91,8 @@
     {
       "@id": "#2tznvh",
       "name": "6.1 Disputes",
-      "x": -329,
-      "y": 417,
+      "x": -278,
+      "y": 353,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#61-disputes-draft-not-built",
       "bgColor": "#ffe2e6",
       "parent": "#aya9s9"
@@ -100,8 +100,8 @@
     {
       "@id": "#cnh2fk",
       "name": "6.2 Several outcomes",
-      "x": -424,
-      "y": 225,
+      "x": -365,
+      "y": 193,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#62-several-outcomes-draft-not-built",
       "bgColor": "#ffe2e6",
       "parent": "#aya9s9"
@@ -109,8 +109,8 @@
     {
       "@id": "#dk76uz",
       "name": "Threats",
-      "x": -585,
-      "y": 67,
+      "x": -496,
+      "y": 57,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#7-threats",
       "bgColor": "#ffe2e6",
       "parent": "#aya9s9"
@@ -118,8 +118,8 @@
     {
       "@id": "#5aggpq",
       "name": "Acceptance",
-      "x": -481,
-      "y": -117,
+      "x": -413,
+      "y": -100,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#8-acceptance",
       "bgColor": "#ffe2e6",
       "parent": "#aya9s9"
@@ -127,8 +127,8 @@
     {
       "@id": "#eqmaaw",
       "name": "← proposals",
-      "x": -45,
-      "y": -209,
+      "x": -42,
+      "y": -192,
       "link": "./docs-proposals.jsonld",
       "bgColor": "#ececec",
       "parent": "#this"

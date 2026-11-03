@@ -21,8 +21,8 @@
     {
       "@id": "#2fzfhg",
       "name": "The method",
-      "x": 241,
-      "y": -55,
+      "x": 222,
+      "y": -51,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/browser-signer.md#the-method",
       "bgColor": "#acd5ff",
       "parent": "#this"
@@ -30,8 +30,8 @@
     {
       "@id": "#6ab87r",
       "name": "What the signer checks",
-      "x": 65,
-      "y": 205,
+      "x": 60,
+      "y": 189,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/browser-signer.md#what-the-signer-checks",
       "bgColor": "#f3bee1",
       "parent": "#this"
@@ -39,8 +39,8 @@
     {
       "@id": "#uyfscv",
       "name": "Why here",
-      "x": -241,
-      "y": 55,
+      "x": -222,
+      "y": 51,
       "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/browser-signer.md#why-here",
       "bgColor": "#f1c99c",
       "parent": "#this"
@@ -48,8 +48,8 @@
     {
       "@id": "#z5cumb",
       "name": "← proposals",
-      "x": -65,
-      "y": -205,
+      "x": -60,
+      "y": -189,
       "link": "./docs-proposals.jsonld",
       "bgColor": "#ececec",
       "parent": "#this"

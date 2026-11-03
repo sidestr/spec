@@ -20,102 +20,111 @@
     },
     {
       "@id": "#9u36xp",
-      "name": "README",
-      "x": 207,
-      "y": -120,
-      "link": "https://github.com/sidestr/spec/blob/gh-pages/README.md#sidestr",
+      "name": "Live site",
+      "x": 221,
+      "y": -53,
+      "link": "https://sidestr.com/spec/",
       "bgColor": "#acd5ff",
       "parent": "#this"
     },
     {
       "@id": "#5q2nc4",
-      "name": "siding/",
-      "x": 413,
-      "y": -239,
-      "link": "https://github.com/sidestr/spec/blob/gh-pages/README.md#siding",
+      "name": "User activated sidechains: Bitcoin's rules beside a…",
+      "x": 352,
+      "y": -211,
+      "link": "https://sidestr.com/spec/",
       "bgColor": "#daeeff",
       "parent": "#9u36xp"
     },
     {
       "@id": "#eegh3a",
+      "name": "sidestr.com/spec",
+      "x": 424,
+      "y": -63,
+      "link": "https://sidestr.com/spec/",
+      "bgColor": "#daeeff",
+      "parent": "#9u36xp"
+    },
+    {
+      "@id": "#tmtdcb",
+      "name": "since Sep 2026 · last 12 Oct 2026",
+      "x": 424,
+      "y": 59,
+      "link": "https://github.com/sidestr/spec/commits/gh-pages",
+      "bgColor": "#ececec",
+      "parent": "#9u36xp"
+    },
+    {
+      "@id": "#ziixui",
       "name": "SPEC.md · 22 ›",
-      "x": 239,
-      "y": 63,
+      "x": 145,
+      "y": 152,
       "link": "./doc-spec.jsonld",
       "bgColor": "#d9c6fb",
       "parent": "#this"
     },
     {
-      "@id": "#tmtdcb",
+      "@id": "#qnf7j2",
       "name": "paper · 1 ›",
-      "x": 91,
-      "y": 198,
+      "x": -25,
+      "y": 194,
       "link": "./docs-paper.jsonld",
       "bgColor": "#f9bdd5",
       "parent": "#this"
     },
     {
-      "@id": "#ziixui",
+      "@id": "#rx55k2",
       "name": "proposals · 8 ›",
-      "x": -125,
-      "y": 184,
+      "x": -180,
+      "y": 122,
       "link": "./docs-proposals.jsonld",
       "bgColor": "#fcc2a9",
       "parent": "#this"
     },
     {
-      "@id": "#qnf7j2",
-      "name": "Open PRs · 1",
-      "x": -247,
-      "y": 32,
-      "link": "https://github.com/sidestr/spec/pulls",
+      "@id": "#ux93wm",
+      "name": "README",
+      "x": -228,
+      "y": -23,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/README.md#sidestr",
       "bgColor": "#e0d199",
       "parent": "#this"
     },
     {
-      "@id": "#rx55k2",
-      "name": "#8 federation: signers are distinct ke…",
-      "x": -494,
-      "y": 63,
-      "link": "https://github.com/sidestr/spec/pull/8",
+      "@id": "#a464iu",
+      "name": "siding/",
+      "x": -427,
+      "y": -43,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/README.md#siding",
       "bgColor": "#f2ecd2",
-      "parent": "#qnf7j2"
+      "parent": "#ux93wm"
     },
     {
-      "@id": "#ux93wm",
-      "name": "Open issues · 12 ›",
-      "x": -183,
-      "y": -145,
-      "link": "./issues.jsonld",
+      "@id": "#simp87",
+      "name": "Open PRs · 1",
+      "x": -141,
+      "y": -154,
+      "link": "https://github.com/sidestr/spec/pulls",
       "bgColor": "#b1dfb5",
       "parent": "#this"
     },
     {
-      "@id": "#a464iu",
-      "name": "sidestr: user activated sidechains. The spec.",
-      "x": 19,
-      "y": -212,
-      "link": "https://github.com/sidestr/spec",
-      "bgColor": "#ececec",
-      "parent": "#this"
-    },
-    {
-      "@id": "#simp87",
-      "name": "since Sep 2026 · last 12 Oct 2026",
-      "x": -35,
-      "y": -424,
-      "link": "https://github.com/sidestr/spec/commits/gh-pages",
-      "bgColor": "#ececec",
-      "parent": "#a464iu"
-    },
-    {
       "@id": "#tzmucf",
-      "name": "sidestr.com/spec",
-      "x": 178,
-      "y": -478,
-      "link": "https://sidestr.com/spec/",
-      "bgColor": "#ececec",
-      "parent": "#a464iu"
+      "name": "#8 federation: signers are distinct ke…",
+      "x": -264,
+      "y": -288,
+      "link": "https://github.com/sidestr/spec/pull/8",
+      "bgColor": "#ddf2de",
+      "parent": "#simp87"
+    },
+    {
+      "@id": "#xmtzgz",
+      "name": "Open issues · 12 ›",
+      "x": 29,
+      "y": -194,
+      "link": "./issues.jsonld",
+      "bgColor": "#95e1e3",
+      "parent": "#this"
     }
   ],
   "connections": [
@@ -128,11 +137,11 @@
       "end": 2
     },
     {
-      "start": 0,
+      "start": 1,
       "end": 3
     },
     {
-      "start": 0,
+      "start": 1,
       "end": 4
     },
     {
@@ -144,7 +153,7 @@
       "end": 6
     },
     {
-      "start": 6,
+      "start": 0,
       "end": 7
     },
     {
@@ -152,16 +161,20 @@
       "end": 8
     },
     {
-      "start": 0,
+      "start": 8,
       "end": 9
     },
     {
-      "start": 9,
+      "start": 0,
       "end": 10
     },
     {
-      "start": 9,
+      "start": 10,
       "end": 11
+    },
+    {
+      "start": 0,
+      "end": 12
     }
   ],
   "selectedNode": 0
