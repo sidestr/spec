@@ -1,5 +1,7 @@
 # sidestr
 
+[![Mind map](https://mindstr.org/badge.svg)](https://mindstr.org/?uri=https://sidestr.com/spec/mindstr/index.jsonld)
+
 User activated sidechains: Bitcoin's rules beside a Bitcoin-family chain, blocks valid because
 they are signed, no subsidy, every coin a coin locked on the parent, and the rules carried as
 signed documents each node chooses to adopt. Signers order blocks; users enforce the rules.

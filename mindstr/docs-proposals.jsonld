@@ -1,0 +1,166 @@
+{
+  "@context": {
+    "@vocab": "https://mindstr.org/ns#",
+    "link": {
+      "@type": "@id"
+    },
+    "parent": {
+      "@type": "@id"
+    }
+  },
+  "version": "0.2",
+  "nodes": [
+    {
+      "@id": "#this",
+      "name": "spec: proposals · 8",
+      "x": 0,
+      "y": 0,
+      "link": "https://github.com/sidestr/spec/tree/gh-pages/proposals",
+      "bgColor": "#ebc573"
+    },
+    {
+      "@id": "#pjbq25",
+      "name": "proposals 1/2",
+      "x": 245,
+      "y": 44,
+      "bgColor": "#acd5ff",
+      "parent": "#this"
+    },
+    {
+      "@id": "#tz98k5",
+      "name": "Assets and pools · 5 ›",
+      "x": 415,
+      "y": -238,
+      "link": "./doc-proposals-assets-and-pools.jsonld",
+      "bgColor": "#daeeff",
+      "parent": "#pjbq25"
+    },
+    {
+      "@id": "#437yyk",
+      "name": "A browser signer · 3 ›",
+      "x": 588,
+      "y": -44,
+      "link": "./doc-proposals-browser-signer.jsonld",
+      "bgColor": "#daeeff",
+      "parent": "#pjbq25"
+    },
+    {
+      "@id": "#j3k2bu",
+      "name": "Checkpoints",
+      "x": 463,
+      "y": 161,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/checkpoints.md#checkpoints",
+      "bgColor": "#daeeff",
+      "parent": "#pjbq25"
+    },
+    {
+      "@id": "#uhqx6j",
+      "name": "The desk: pledging a locked r…",
+      "x": 349,
+      "y": 404,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/desk.md#the-desk-pledging-a-locked-reward",
+      "bgColor": "#daeeff",
+      "parent": "#pjbq25"
+    },
+    {
+      "@id": "#aurbbn",
+      "name": "proposals 2/2",
+      "x": -222,
+      "y": 97,
+      "bgColor": "#febdc6",
+      "parent": "#this"
+    },
+    {
+      "@id": "#fxz322",
+      "name": "Ephemeral chains · 6 ›",
+      "x": -167,
+      "y": 401,
+      "link": "./doc-proposals-ephemeral.jsonld",
+      "bgColor": "#ffe2e6",
+      "parent": "#aurbbn"
+    },
+    {
+      "@id": "#s77s87",
+      "name": "The EVM as a rule · 5 ›",
+      "x": -445,
+      "y": 329,
+      "link": "./doc-proposals-evm.jsonld",
+      "bgColor": "#ffe2e6",
+      "parent": "#aurbbn"
+    },
+    {
+      "@id": "#k73rni",
+      "name": "Level 2: several signers",
+      "x": -492,
+      "y": 77,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/level-2.md#level-2-several-signers",
+      "bgColor": "#ffe2e6",
+      "parent": "#aurbbn"
+    },
+    {
+      "@id": "#r8zm2z",
+      "name": "Markets · 10 ›",
+      "x": -562,
+      "y": -153,
+      "link": "./doc-proposals-markets.jsonld",
+      "bgColor": "#ffe2e6",
+      "parent": "#aurbbn"
+    },
+    {
+      "@id": "#wzv4c3",
+      "name": "← spec",
+      "x": -40,
+      "y": -210,
+      "link": "./index.jsonld",
+      "bgColor": "#ececec",
+      "parent": "#this"
+    }
+  ],
+  "connections": [
+    {
+      "start": 0,
+      "end": 1
+    },
+    {
+      "start": 1,
+      "end": 2
+    },
+    {
+      "start": 1,
+      "end": 3
+    },
+    {
+      "start": 1,
+      "end": 4
+    },
+    {
+      "start": 1,
+      "end": 5
+    },
+    {
+      "start": 0,
+      "end": 6
+    },
+    {
+      "start": 6,
+      "end": 7
+    },
+    {
+      "start": 6,
+      "end": 8
+    },
+    {
+      "start": 6,
+      "end": 9
+    },
+    {
+      "start": 6,
+      "end": 10
+    },
+    {
+      "start": 0,
+      "end": 11
+    }
+  ],
+  "selectedNode": 0
+}

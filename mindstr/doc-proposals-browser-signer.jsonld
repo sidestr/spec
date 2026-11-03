@@ -1,0 +1,77 @@
+{
+  "@context": {
+    "@vocab": "https://mindstr.org/ns#",
+    "link": {
+      "@type": "@id"
+    },
+    "parent": {
+      "@type": "@id"
+    }
+  },
+  "version": "0.2",
+  "nodes": [
+    {
+      "@id": "#this",
+      "name": "A browser signer",
+      "x": 0,
+      "y": 0,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/browser-signer.md#a-browser-signer",
+      "bgColor": "#ebc573"
+    },
+    {
+      "@id": "#2fzfhg",
+      "name": "The method",
+      "x": 241,
+      "y": -55,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/browser-signer.md#the-method",
+      "bgColor": "#acd5ff",
+      "parent": "#this"
+    },
+    {
+      "@id": "#6ab87r",
+      "name": "What the signer checks",
+      "x": 65,
+      "y": 205,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/browser-signer.md#what-the-signer-checks",
+      "bgColor": "#f3bee1",
+      "parent": "#this"
+    },
+    {
+      "@id": "#uyfscv",
+      "name": "Why here",
+      "x": -241,
+      "y": 55,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/browser-signer.md#why-here",
+      "bgColor": "#f1c99c",
+      "parent": "#this"
+    },
+    {
+      "@id": "#z5cumb",
+      "name": "← proposals",
+      "x": -65,
+      "y": -205,
+      "link": "./docs-proposals.jsonld",
+      "bgColor": "#ececec",
+      "parent": "#this"
+    }
+  ],
+  "connections": [
+    {
+      "start": 0,
+      "end": 1
+    },
+    {
+      "start": 0,
+      "end": 2
+    },
+    {
+      "start": 0,
+      "end": 3
+    },
+    {
+      "start": 0,
+      "end": 4
+    }
+  ],
+  "selectedNode": 0
+}

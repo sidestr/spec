@@ -1,0 +1,116 @@
+{
+  "@context": {
+    "@vocab": "https://mindstr.org/ns#",
+    "link": {
+      "@type": "@id"
+    },
+    "parent": {
+      "@type": "@id"
+    }
+  },
+  "version": "0.2",
+  "nodes": [
+    {
+      "@id": "#this",
+      "name": "Ephemeral chains",
+      "x": 0,
+      "y": 0,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/ephemeral.md#ephemeral-chains",
+      "bgColor": "#ebc573"
+    },
+    {
+      "@id": "#7iejm3",
+      "name": "What they are for",
+      "x": 207,
+      "y": -120,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/ephemeral.md#1-what-they-are-for",
+      "bgColor": "#acd5ff",
+      "parent": "#this"
+    },
+    {
+      "@id": "#452y5w",
+      "name": "The close",
+      "x": 239,
+      "y": 63,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/ephemeral.md#2-the-close",
+      "bgColor": "#d9c6fb",
+      "parent": "#this"
+    },
+    {
+      "@id": "#yyjnxk",
+      "name": "The tombstone",
+      "x": 91,
+      "y": 198,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/ephemeral.md#3-the-tombstone",
+      "bgColor": "#f9bdd5",
+      "parent": "#this"
+    },
+    {
+      "@id": "#hrvxpy",
+      "name": "Manners",
+      "x": -125,
+      "y": 184,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/ephemeral.md#4-manners",
+      "bgColor": "#fcc2a9",
+      "parent": "#this"
+    },
+    {
+      "@id": "#hzsqn4",
+      "name": "In a process",
+      "x": -247,
+      "y": 32,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/ephemeral.md#5-in-a-process",
+      "bgColor": "#e0d199",
+      "parent": "#this"
+    },
+    {
+      "@id": "#dttxwc",
+      "name": "What this changes elsewhere",
+      "x": -183,
+      "y": -145,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/ephemeral.md#6-what-this-changes-elsewhere",
+      "bgColor": "#b1dfb5",
+      "parent": "#this"
+    },
+    {
+      "@id": "#p8ysyk",
+      "name": "← proposals",
+      "x": 19,
+      "y": -212,
+      "link": "./docs-proposals.jsonld",
+      "bgColor": "#ececec",
+      "parent": "#this"
+    }
+  ],
+  "connections": [
+    {
+      "start": 0,
+      "end": 1
+    },
+    {
+      "start": 0,
+      "end": 2
+    },
+    {
+      "start": 0,
+      "end": 3
+    },
+    {
+      "start": 0,
+      "end": 4
+    },
+    {
+      "start": 0,
+      "end": 5
+    },
+    {
+      "start": 0,
+      "end": 6
+    },
+    {
+      "start": 0,
+      "end": 7
+    }
+  ],
+  "selectedNode": 0
+}

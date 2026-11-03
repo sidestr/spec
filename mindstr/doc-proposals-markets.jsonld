@@ -1,0 +1,192 @@
+{
+  "@context": {
+    "@vocab": "https://mindstr.org/ns#",
+    "link": {
+      "@type": "@id"
+    },
+    "parent": {
+      "@type": "@id"
+    }
+  },
+  "version": "0.2",
+  "nodes": [
+    {
+      "@id": "#this",
+      "name": "Markets",
+      "x": 0,
+      "y": 0,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#markets",
+      "bgColor": "#ebc573"
+    },
+    {
+      "@id": "#u2s2vv",
+      "name": "sections 1/2",
+      "x": 247,
+      "y": 32,
+      "bgColor": "#acd5ff",
+      "parent": "#this"
+    },
+    {
+      "@id": "#vx2z65",
+      "name": "Records",
+      "x": 397,
+      "y": -259,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#1-records",
+      "bgColor": "#daeeff",
+      "parent": "#u2s2vv"
+    },
+    {
+      "@id": "#xwei9g",
+      "name": "The market coin",
+      "x": 571,
+      "y": -125,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#2-the-market-coin",
+      "bgColor": "#daeeff",
+      "parent": "#u2s2vv"
+    },
+    {
+      "@id": "#6bzs4i",
+      "name": "The markets rule",
+      "x": 494,
+      "y": 63,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#3-the-markets-rule",
+      "bgColor": "#daeeff",
+      "parent": "#u2s2vv"
+    },
+    {
+      "@id": "#fkywkd",
+      "name": "The resolver",
+      "x": 503,
+      "y": 263,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#4-the-resolver",
+      "bgColor": "#daeeff",
+      "parent": "#u2s2vv"
+    },
+    {
+      "@id": "#j8deiz",
+      "name": "Prices",
+      "x": 290,
+      "y": 346,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#5-prices",
+      "bgColor": "#daeeff",
+      "parent": "#u2s2vv"
+    },
+    {
+      "@id": "#aya9s9",
+      "name": "sections 2/2",
+      "x": -212,
+      "y": 112,
+      "bgColor": "#febdc6",
+      "parent": "#this"
+    },
+    {
+      "@id": "#vn2imx",
+      "name": "Activation",
+      "x": -89,
+      "y": 418,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#6-activation",
+      "bgColor": "#ffe2e6",
+      "parent": "#aya9s9"
+    },
+    {
+      "@id": "#2tznvh",
+      "name": "6.1 Disputes",
+      "x": -329,
+      "y": 417,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#61-disputes-draft-not-built",
+      "bgColor": "#ffe2e6",
+      "parent": "#aya9s9"
+    },
+    {
+      "@id": "#cnh2fk",
+      "name": "6.2 Several outcomes",
+      "x": -424,
+      "y": 225,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#62-several-outcomes-draft-not-built",
+      "bgColor": "#ffe2e6",
+      "parent": "#aya9s9"
+    },
+    {
+      "@id": "#dk76uz",
+      "name": "Threats",
+      "x": -585,
+      "y": 67,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#7-threats",
+      "bgColor": "#ffe2e6",
+      "parent": "#aya9s9"
+    },
+    {
+      "@id": "#5aggpq",
+      "name": "Acceptance",
+      "x": -481,
+      "y": -117,
+      "link": "https://github.com/sidestr/spec/blob/gh-pages/proposals/markets.md#8-acceptance",
+      "bgColor": "#ffe2e6",
+      "parent": "#aya9s9"
+    },
+    {
+      "@id": "#eqmaaw",
+      "name": "← proposals",
+      "x": -45,
+      "y": -209,
+      "link": "./docs-proposals.jsonld",
+      "bgColor": "#ececec",
+      "parent": "#this"
+    }
+  ],
+  "connections": [
+    {
+      "start": 0,
+      "end": 1
+    },
+    {
+      "start": 1,
+      "end": 2
+    },
+    {
+      "start": 1,
+      "end": 3
+    },
+    {
+      "start": 1,
+      "end": 4
+    },
+    {
+      "start": 1,
+      "end": 5
+    },
+    {
+      "start": 1,
+      "end": 6
+    },
+    {
+      "start": 0,
+      "end": 7
+    },
+    {
+      "start": 7,
+      "end": 8
+    },
+    {
+      "start": 7,
+      "end": 9
+    },
+    {
+      "start": 7,
+      "end": 10
+    },
+    {
+      "start": 7,
+      "end": 11
+    },
+    {
+      "start": 7,
+      "end": 12
+    },
+    {
+      "start": 0,
+      "end": 13
+    }
+  ],
+  "selectedNode": 0
+}
