@@ -58,6 +58,7 @@ chain's network:
 | `addressPrefix` | a bech32m prefix distinct from the parent's, so a parent address is never a sidechain address |
 | `pegConfirmations` | parent confirmations before a peg-in may be claimed |
 | `refundBlocks` | the relative timelock on every peg output's refund path |
+| `custody` | who holds the pegs: `key` (default), `threshold` or `bitvm` (section 6.1) |
 | `genesis` | the genesis document (section 5) |
 | `name` | a short alias for people and tags, `sidestr:<name>` (section 11); not an identity |
 
@@ -201,6 +202,44 @@ The refund path means a peg-in that is never claimed, or a chain that dies, retu
 to the pegger after the timelock. While the parent chain is stalled the timelock does not
 tick; the coins stay pegged.
 
+### 6.1 The peg output
+
+Every peg output is a BIP 341 output built from three parts. A chain chooses the first; the
+other two are the same on every chain.
+
+1. **Custody**: the internal key and any custody leaves, which say who can spend the peg (to
+   pay peg-outs, section 7, or to move it to new custody). The chain document names it as
+   `custody` (below); everything else about pegs is independent of it.
+2. **Refund**: the leaf `and_v(v:pk(refund), older(refundBlocks))`, in every peg output
+   whatever the custody, so a peg that is never claimed, or whose custody fails, goes back to
+   the pegger.
+3. **Destination**, in one of two forms. The **marker form** names it beside the output, the
+   `OP_RETURN` `pegin:<chain alias>:<sidechain output script>` above; it is the default. The
+   **tweak form** commits to it inside the output with one more leaf, `pk(C)`, where `C` =
+   NUMS + tagged(`sidestr/peg-in`, chain hash ‖ sha256(script))·G is unspendable. The
+   output key then binds the chain and the script, and a validator with a parent view checks
+   a claim by rebuilding the output from its reveal ([issue #23](https://github.com/sidestr/spec/issues/23),
+   built in `siding/lib/pegtweak.mjs`).
+
+| `custody` | internal key | custody leaves | a peg-out is paid by | level |
+|---|---|---|---|---|
+| `key` | the signer's key | none | the signer, by the key path | 1 |
+| `threshold` | NUMS tweaked by the chain hash | `multi_a(k, pk_1, …, pk_n)` | `k` of the `n` signers, by the script path, in a round over the relay ([level 2](proposals/level-2.md)) | 2 |
+| `bitvm` | the bridge's `n`-of-`n` key | per the proposal | an operator who pays first and is repaid from the peg after a challenge period ([BitVM](proposals/bitvm.md)) | draft |
+
+The burn (section 7) is the same under every custody: a sidechain transaction asks for a
+peg-out without knowing who pays it, so custody can change without changing a wallet. The
+`peg` announcement (section 11) is derived from the custody, the refund template and the form.
+A chain changes custody the way it changes signers: a rule document with an activation
+height, then a sweep of every peg output into outputs of the new custody, recorded on the
+parent like a peg-out.
+
+*As built.* The reference producer announces, at level 1, a fresh `bech32m` address of its
+parent wallet: a key-path output with no refund leaf. A peg-in built from that announcement
+alone has no way back if the chain dies. The fix is to announce the refund template with the
+key, so a wallet adds the refund leaf itself; until then a pegger who wants the refund builds
+the output by hand, as the first txbt4 pegs did.
+
 ### 6.2 The desk
 
 A chain may pay now for a coinbase reward locked on the parent, against the miner's
@@ -220,7 +259,8 @@ paid within `pegoutBlocks` parent blocks and publishes the ones that are not. Th
 producer pays each burn as soon as the block holding it is on the chain, once, keeping its
 record beside the chain and reconciling it with the peg wallet's own history on start. In
 level 1 this is the federation's promise and the validators' record of whether it was kept.
-Trust-minimised peg-out is out of scope for 0.0.1.
+Trust-minimised peg-out is the `bitvm` custody (section 6.1), a draft:
+[proposals/bitvm.md](proposals/bitvm.md).
 
 ## 8. Rules as documents
 
@@ -354,6 +394,7 @@ status. The core above changes only when a proposal has run unchanged for a whil
 | [Ephemeral chains](proposals/ephemeral.md) | a note: chains made for one job, with a close, a tombstone and manners |
 | [A browser signer](proposals/browser-signer.md) | draft: `window.nostr.sidestr.signTransaction`, reference signer in Podkey |
 | [Markets](proposals/markets.md) | draft: prediction markets as one rule over assets and pools (split, merge, redeem, a named resolver, refund at par) |
+| [BitVM custody](proposals/bitvm.md) | draft: peg-outs paid by an operator and repaid from the peg after a challenge period; nothing built |
 
 ## 16. Changelog
 
